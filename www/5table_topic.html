@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html>
+    <head>
+            <meta charset="utf-8">
+        <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no, width=device-width">
+        <title>Table Topic</title>
+        <link rel="stylesheet" type="text/css" href="css/jquery.mobile-1.4.5.min.css" />
+        <script src="js/jquery-1.11.1.min.js"></script>
+        <script src="js/jquery.mobile-1.4.5.min.js"></script>
+        <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
+        <script src="js/jquery.min.js"></script>
+        <script src="js/bootstrap.min.js"></script>
+       <!-- <link rel="stylesheet/less" type="text/css" href="styles.less" />
+        <script src="less.min.js" ></script> -->
+       <style>
+        @import url('https://fonts.googleapis.com/css?family=Encode+Sans+Condensed:400,600');
+* {
+  outline: none;
+}
+
+strong {
+  font-weight: 600;
+}
+
+.page {
+  width: 100%;
+  height: 100vh;
+ 
+  font-family: 'Encode Sans Condensed', sans-serif;
+  font-weight: 600;
+  letter-spacing: .03em;
+  color: #000;
+    z-index: -1;
+}
+
+header {
+  display: flex;
+  position: fixed;
+  width: 100%;
+  height: 70px;
+  background: #000;
+  color: #fff;
+  justify-content: center;
+  align-items: center;
+  -webkit-tap-highlight-color: rgba(0,0,0,0);
+}
+
+main {
+  padding: 70px 20px 0;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+   background: #e6e6e6;
+}
+
+main > div {
+  margin: auto;
+  max-width: 600px;
+}
+
+main h2 span {
+  color: #BF7497;
+}
+
+main p {
+  line-height: 1.5;
+  font-weight: 200;
+  margin: 20px 0;
+}
+
+main small {
+  font-weight: 300;
+  color: #888;
+}
+
+#nav-container {
+  position: fixed;
+  height: 100vh;
+  width: 100%;
+  pointer-events: none;
+    z-index: 1;
+}
+#nav-container .bg {
+  position: absolute;
+  top: 70px;
+  left: 0;
+  width: 100%;
+  height: calc(100% - 70px);
+  visibility: hidden;
+  opacity: 0;
+  transition: .3s;
+  background: #000;
+}
+#nav-container:focus-within .bg {
+  visibility: visible;
+  opacity: .6;
+}
+#nav-container * {
+  visibility: visible;
+}
+
+.button {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  z-index: 1;
+  -webkit-appearance: none;
+  border: 0;
+  background: transparent;
+  border-radius: 0;
+  height: 70px;
+  width: 30px;
+  cursor: pointer;
+  pointer-events: auto;
+  margin-left: 25px;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: rgba(0,0,0,0);
+}
+.icon-bar {
+  display: block;
+  width: 100%;
+  height: 3px;
+  background: #fff;
+  transition: .3s;
+}
+.icon-bar + .icon-bar {
+  margin-top: 5px;
+}
+
+#nav-container:focus-within .button {
+  pointer-events: none;
+}
+#nav-container:focus-within .icon-bar:nth-of-type(1) {
+  transform: translate3d(0,8px,0) rotate(45deg);
+}
+#nav-container:focus-within .icon-bar:nth-of-type(2) {
+  opacity: 0;
+}
+#nav-container:focus-within .icon-bar:nth-of-type(3) {
+  transform: translate3d(0,-8px,0) rotate(-45deg);
+}
+
+#nav-content {
+  
+  padding: 20px;
+  width: 90%;
+  max-width: 200px;
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  background: #000;
+  pointer-events: auto;
+  -webkit-tap-highlight-color: rgba(0,0,0,0);
+  transform: translateX(-100%);
+  transition: transform .3s;
+  will-change: transform;
+  contain: paint;
+   z-index: 1; position:relative; 
+}
+
+#nav-content ul {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+#nav-content li a {
+  padding: 10px 5px;
+  display: block;
+  text-transform: uppercase;
+  transition: color .1s;
+}
+
+#nav-content li a:hover {
+  color: #BF7497;
+}
+
+#nav-content li:not(.small) + .small {
+  margin-top: auto;
+}
+
+
+#nav-container:focus-within #nav-content {
+  transform: none;
+}
+
+
+
+
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body {
+  height: 100%;
+}
+
+a,
+a:visited,
+a:focus,
+a:active,
+a:link {
+  text-decoration: none;
+  outline: 0;
+}
+
+a {
+  color: currentColor;
+  transition: .2s ease-in-out;
+}
+
+h1, h2, h3, h4 {
+  margin: 0;
+}
+
+ul {
+  padding: 0;
+  list-style: none;
+}
+
+img {
+  vertical-align: middle;
+  height: auto;
+  width: 100%;
+}
+           
+            .box{
+            
+                width:7px;
+                height:6px;
+                                
+            }
+
+            .green{
+                background:#008000;
+                margin:20px;
+                margin-left: 35px;
+            }
+            .yellow{
+                background: #FFE900;
+                margin:20px;
+                
+            }
+            .red{
+                background:#C0392B;
+                margin: 20px;
+            }
+            .butt-group{
+                margin-left : 30px;
+            }
+            span.a {
+                display: inline-block;
+                width: 80px;
+                height: 80px;
+                padding: 5px;
+                    
+                background-color: limegreen; 
+                align-items: center;
+            }
+
+            span.b {
+                display: inline-block;
+                width: 80px;
+                height: 80px;
+                padding: 5px;
+                    
+                background-color: yellow; 
+                align-items: center;
+            }
+            span.c {
+                display: inline-block;
+                width: 80px;
+                height: 80px;
+                padding: 5px;
+                    
+                background-color: red; 
+                align-items: center;
+            }
+            input{
+                display:inline-block;
+            }
+ div.a {
+                    float: left;
+                }
+
+            div.b {
+                    float: right;
+                }
+        </style>
+            
+    </head>
+    <body>
+        
+        <header tabindex="0">Table Topic Timer</header>
+    <div class="page">
+        
+  <header tabindex="0">TableTopic Timer</header>
+  <div id="nav-container">
+    <div class="button" tabindex="0">
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+    </div>
+    <div id="nav-content" tabindex="0">
+      <ul>
+        <li><a href="2home.html" rel="external">Home Page</a></li>
+        <li><a href="3create_agenda.html" rel="external">Create Agenda</a></li>
+        <li><a href="#0">View/Modify Agenda</a></li>
+        <li><a href="4timer.html" rel="external">Start Timer</a></li>
+        <li><a href="6edit_table_topic.html" rel="external">Edit Table Topic</a></li>
+        <li><a href="#0">Report</a></li>
+        <li><a href="9gen_info.html" rel="external">General Information</a></li>
+        <li><a href="7add_new_toast.html" rel="external">Add Toastmaster</a></li>
+        <li><a href="8add_speech_type.html" rel="external">Add Speech Type</a></li>  
+      </ul>
+    </div>
+  </div>
+  <main>
+                
+     
+      <form>
+        <div class="a">
+        DATE:DD/MM/YYYY
+        </div> 
+        <div class="b">
+        MEETING N0:123
+        </div>
+        <div style="clear: both;"></div>
+        <br/>
+         <p class="inlne">Type of Speech      : </p>
+      <p class="inline">Table Topic Speech No. :<p>
+        Name of the Speaker:
+        <select required>
+        <option value="" disabled selected hidden>Select</option>
+        <option>Elzabeth</option>
+        <option>Gopika</option>
+        <option>Greeta</option>
+        <option>Kavya</option>
+        </select>
+        </form>
+      
+                <div class="form-row">
+                    <button data-inline="true">     Start     </button>
+                    <button data-inline="true">     Pause     </button>
+                   <button data-inline="true">     Stop     </button>
+      </div>
+               <div class="form-row">
+               <span data-inline="true" class="a">1</span> 
+               <span data-inline="true" class="b">2</span>
+               <span data-inline="true" class="c">3</span>
+     </div>
+                
+                <div class="form-row">
+                    <a href="index.html" data-role="button" data-inline="true">Next</a>
+                    <a href="index.html" data-role="button" data-inline="true">Submit Session</a>
+                    
+                </div>
+        </main>
+        </div>
+        <script type="text/javascript" src="cordova.js"></script>
+    </body>
+</html>
