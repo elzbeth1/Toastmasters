@@ -8,26 +8,17 @@
         <link rel="stylesheet" type="text/css" href="css/jquery.mobile-1.4.5.min.css" />
         <script src="js/jquery-1.11.1.min.js"></script>
         <script src="js/jquery.mobile-1.4.5.min.js"></script>
-        <style>
+        <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
+        <script src="js/jquery.min.js"></script>
+        <script src="js/bootstrap.min.js"></script>
+       <!-- <link rel="stylesheet/less" type="text/css" href="styles.less" />
+        <script src="less.min.js" ></script> -->
+       <style>
         @import url('https://fonts.googleapis.com/css?family=Encode+Sans+Condensed:400,600');
 * {
   outline: none;
 }
 
-strong {
-  font-weight: 600;
-}
-
-.page {
-  width: 100%;
-  height: 100vh;
- 
-  font-family: 'Encode Sans Condensed', sans-serif;
-  font-weight: 600;
-  letter-spacing: .03em;
-  color: #000;
-    z-index: -1;
-}
 
 header {
   display: flex;
@@ -41,33 +32,14 @@ header {
   -webkit-tap-highlight-color: rgba(0,0,0,0);
 }
 
-main {
-  padding: 70px 20px 0;
-  display: flex;
+           main{
+               padding:80px 10px;
+               height:100%;
+               background: #e6e6e6;
+               display: flex;
   flex-direction: column;
-  height: 100%;
-   background: #e6e6e6;
-}
+           }
 
-main > div {
-  margin: auto;
-  max-width: 600px;
-}
-
-main h2 span {
-  color: #BF7497;
-}
-
-main p {
-  line-height: 1.5;
-  font-weight: 200;
-  margin: 20px 0;
-}
-
-main small {
-  font-weight: 300;
-  color: #888;
-}
 
 #nav-container {
   position: fixed;
@@ -181,18 +153,7 @@ main small {
 #nav-container:focus-within #nav-content {
   transform: none;
 }
-
-
-
-
-
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-}
-
-html, body {
+html, body{
   height: 100%;
 }
 
@@ -210,42 +171,17 @@ a {
   transition: .2s ease-in-out;
 }
 
-h1, h2, h3, h4 {
-  margin: 0;
-}
+
 
 ul {
   padding: 0;
   list-style: none;
 }
-
-img {
-  vertical-align: middle;
-  height: auto;
-  width: 100%;
-}
-    #ma
-        {
-            padding-left: 10px;
-            padding-right: 10px;
-        }
-  
-        #mm,#ms,#mo
-        {   margin-left: 30px;
-            padding-right: 125px;
-        }
-  #mp
-        {
-        margin-left: 50px;
-            
-        }
-        #mo
-        {
-            padding-right: 270px;
-        }
-       
-    </style>
+ 
+        </style>
+    </head>
     <body>
+        <div data-role="page">
   <header tabindex="0">Add speech type</header>
   <div id="nav-container">
     <div class="button" tabindex="0">
@@ -267,57 +203,34 @@ img {
         </ul>
     </div>
   </div>
-        <br/>
-        <br/>
-    <br/>
-<br/>
-<form>
-        <div data-role="main" id="ma">
+        <main>
+        <form >
             <div class="form-group">
-  <h3>Enter the new speech type:</h3> 
-  <input type="text" class="form-control" id="usr">
+  <label for="speechType">Enter new speech type:</label>
+                <input type="text" class="form-control" id="speechType"/>
                 </div>
-    
-    <br/>
- <h3>  Enter the estimated time</h3>
-
-
-<fieldset class="ui-grid-a">
-<div class="ui-block-a col-xs-6" id="ms">
-         <label for="startTime"></label>
-                    <input type="number" class="form-control" size="4" placeholder="MM"/>
-    </div> 
-    
-    <fieldset class="ui-grid-b">
-<div class="ui-block-b col-xs-6" id="mp" >
-       <label for="startTime"></label>
-                    <input type="number"  class="form-control" size="4" placeholder="MM"/>
-                
+    <div class="form-group">
+                <label for="estTime">Enter time Duration</label>
+                <input type="time" id="estTime" class="form-control"/>
 </div>
-    </fieldset>
-     </fieldset>
-    <br/>
-    <br/>
    
-    <div class="form-control" >
-<h3>Time to turn on green</h3>
-        <div class="form-control" id="mo">
-        <input type="number"  class="form-control" size="4" placeholder="MM"/>
+    <div class="form-group" >
+        <label for="green">Time to turn ON green:</label>
+            <input type="time" class="form-control" id="green"/>
+            </div>
+        <div class="form-gorup">
+            <label for="amber">Time to turn amber on</label>
+        <input type="time"  class="form-control" id="amber"/>
         </div>
-        <h3>Time to turn amber on</h3><div class="form-control" id="mo">
-        <input type="number"  class="form-control" size="4" placeholder="MM"/>
+        <div class="form-group">
+        <label for="red">Time to turn on red</label>
+        <input type="time"  class="form-control" />
         </div>
-        
-        <h3>Time to turn on red</h3>
-        <div class="form-control" id="mo">
-        <input type="number"  class="form-control" size="4" placeholder="MM"/>
-        </div>
-        </div>
-
-    <br/>
-    <br/>
-<button type="button" size="small" class="btn btn-primary active">ADD</button>
-</div>            
+<button type="submit" size="small" class="btn btn-primary active">ADD</button>
+  
+    
         </form>
+        </main>
+        </div>
     </body>
 </html>

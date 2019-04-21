@@ -19,20 +19,9 @@
   outline: none;
 }
 
-strong {
-  font-weight: 600;
-}
 
-.page {
-  width: 100%;
-  height: 100vh;
- 
-  font-family: 'Encode Sans Condensed', sans-serif;
-  font-weight: 600;
-  letter-spacing: .03em;
-  color: #000;
-    z-index: -1;
-}
+
+
 
 header {
   display: flex;
@@ -46,33 +35,15 @@ header {
   -webkit-tap-highlight-color: rgba(0,0,0,0);
 }
 
-main {
-  padding: 70px 20px 0;
-  display: flex;
+main{
+               padding:80px 10px;
+               height:100%;
+               background: #e6e6e6;
+               display: flex;
   flex-direction: column;
-  height: 100%;
-   background: #e6e6e6;
-}
+           }
 
-main > div {
-  margin: auto;
-  max-width: 600px;
-}
 
-main h2 span {
-  color: #BF7497;
-}
-
-main p {
-  line-height: 1.5;
-  font-weight: 200;
-  margin: 20px 0;
-}
-
-main small {
-  font-weight: 300;
-  color: #888;
-}
 
 #nav-container {
   position: fixed;
@@ -188,15 +159,6 @@ main small {
 }
 
 
-
-
-
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-}
-
 html, body {
   height: 100%;
 }
@@ -229,26 +191,17 @@ img {
   height: auto;
   width: 100%;
 }
-         #toast{
-             
-             padding-left: 30px;
-             padding-right: 30px;
-         }
-         #da{
-             
-              padding-left: 30px;
-             padding-right: 30px;
-         }
+        
         #btn
          {
              padding-right: 30px;
              
          }
-    </style>
+        </style></head>
     
     <body>
-             
-    <div class="page">
+    <div data-role="page">         
+    
         
   <header tabindex="0">Add new toastmaster</header>
   <div id="nav-container">
@@ -271,46 +224,30 @@ img {
         </ul>
         </div>
             </div>  
-      <br/>
-        <br/>
-        <br/>
-    <br/>
-    <br/>
-      <form role="form">
-      <div class="form-group" id="toast">
-          <h3>Enter Toastmaster Name</h3>
-  <input type="text" class="form-control" id="usr" required>
+      <main>
+      <form>
+      <div class="form-group">
+          <label for="name">Enter Toastmaster Name</label>
+  <input type="text" class="form-control" id="name" required/>
 </div>
-</form>
-<br/>
-<br/>
-  <div class="wrap-input100 validate-input" data-validate="Date is required" id="da">
-					<span class="label-input100"><h3>Date of Birth</h3></span>
-					<input class="input100" type="date" name="date">
-					<span class="focus-input100"></span>
+<div class="form-group" data-validate="Date is required">
+    <label for="date">Date of Birth</label>
+					<input  type="date" id="date"/>
+					
 				</div>
-<br/>
-<br/>
-<form role="form" data-toggle="validator">
-<div class="form-group" id="toast">
-          <h3>Enter the Email-id</h3>
-  <input type="email" class="form-control" id="usr" required>
-</div>
-    </form>
-<br/>
-<br/>
-<form role="form">
-<div class="form-group" id="toast">
-          <h3>Enter the Contact Number</h3>
-  <input type="number" class="form-control" id="usr" required>
-</div>
-</form>
-<br/>
-<br/>
 
-         <button type="button" class="btn btn-primary btn-lg active" id="btn">ADD</button>
 
+<div class="form-group">
+          <label for="email">Enter the Email-id</label>
+  <input type="email" class="form-control" id="email" required/>
 </div>
-
+<div class="form-group">
+          <label for="num">Enter the Contact Number</label>
+  <input type="number" class="form-control" id="num" required/>
+</div>
+    <button type="submit" class="btn btn-primary  active" id="btn">ADD</button>
+          </form>
+          </main>
+        </div>
     </body>
 </html>
