@@ -12,6 +12,62 @@
         <script src="js/bootstrap.min.js"></script>
        <!-- <link rel="stylesheet/less" type="text/css" href="styles.less" />
         <script src="less.min.js" ></script> -->
+        <script>
+            $(document).ready(function(){
+            var db;
+        document.addEventListener("deviceready", onDeviceReady, false);
+function onDeviceReady() {
+ 
+            alert('enteredDR');
+   window.plugins.sqlDB.copy("toastmasters.db",0,copysuccess,copyerror);
+}
+               
+    function copysuccess(){
+        alert('enteredCS');
+    db = window.sqlitePlugin.openDatabase({name: "toastmasters.db",location:'default'});
+        db.transaction(queryDB, errorCB);
+}
+               
+function copyerror(e){
+    alert('errorCE : '+JSON.stringify(e));
+    db = window.sqlitePlugin.openDatabase({name: "toastmasters.db",location:'default'});
+    db.transaction(queryDB, errorCB);
+
+}
+ 
+
+function queryDB(tx){
+    
+     db.transaction(function(tx) {
+         var value;
+        tx.executeSql('SELECT * FROM MEETING', [], function(tx, result) {
+            dataset = result.rows;
+            len=dataset.length;
+            if(len>0)
+                {
+                    value=dataset.item(len-1).MEETING_NO;
+                    value=value+1;
+                }
+            else{
+                
+                value=1;
+            }
+                
+        });
+    });
+
+    
+}
+function errorCB(err){
+    
+  alert("Error processing SQL : "+err.message);
+}     
+                   
+                       
+  
+  })
+            
+        </script>
        <style>
         @import url('https://fonts.googleapis.com/css?family=Encode+Sans+Condensed:400,600');
 
@@ -296,7 +352,7 @@ img {
     </div>
     <div id="nav-content" tabindex="0">
   <ul>
-        <li><a href="2home.html" rel="external">Home Page</a></li>
+        <li><a href="index.html" rel="external">Home Page</a></li>
         <li><a href="3create_agenda.html" rel="external">Create Agenda</a></li>
         <li><a href="#0">View/Modify Agenda</a></li>
         <li><a href="4timer.html" rel="external">Start Timer</a></li>

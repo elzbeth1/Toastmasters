@@ -13,8 +13,91 @@
         <script src="js/bootstrap.min.js"></script>
        <!-- <link rel="stylesheet/less" type="text/css" href="styles.less" />
         <script src="less.min.js" ></script> -->
+        <script>
+         $(document).ready(function(){
+            var db;
+        document.addEventListener("deviceready", onDeviceReady, false);
+function onDeviceReady() {
+ 
+            alert('enteredDR');
+   window.plugins.sqlDB.copy("toastmasters.db",0,copysuccess,copyerror);
+}
+               
+    function copysuccess(){
+        alert('enteredCS');
+    db = window.sqlitePlugin.openDatabase({name: "toastmasters.db",location:'default'});
+        db.transaction(queryDB, errorCB);
+}
+               
+function copyerror(e){
+    alert('errorCE : '+JSON.stringify(e));
+    db = window.sqlitePlugin.openDatabase({name: "toastmasters.db",location:'default'});
+    db.transaction(queryDB, errorCB);
+
+}
+ function queryDB(tx) {
+    
+    
+alert('hello');
+     
+    db.transaction(function(tx) {
+        tx.executeSql('SELECT * FROM GENERAL_INFORMATION', [], function(tx, result) {
+            var resultDiv = $('#con');
+            dataset = result.rows;
+                item = dataset.item(dataset.length);
+                data = "Country : " + item.COUNTRY;
+                resultDiv.append(data + "<br>");
+            
+            data = "Locality : " + item.LOCALITY;
+                resultDiv.append(data + "<br>");
+            
+            data = "Club_Number : " + item.CLUB_NUMBER;
+                resultDiv.append(data + "<br>");
+            
+            data = "Club_Name : " + item.CLUB_NAME;
+                resultDiv.append(data + "<br>");
+            
+            data = "Area_Name : " + item.AREA_NAME;
+                resultDiv.append(data + "<br>");
+            
+            data = "Division_Name : " + item.DIVISION_NAME;
+                resultDiv.append(data + "<br>");
+            
+            data = "District_Name : " + item.DISTRICT_NAME;
+                resultDiv.append(data + "<br>");
+            
+            data = "Meeting_Day : " + item.MEETING_DAY;
+                resultDiv.append(data + "<br>");
+            
+            data = "Meeting_time : " + item.MEETING_TIME;
+                resultDiv.append(data + "<br>");
+            
+            
+            data = "Contact_phone_no : " + item.CONTACT_PHONE_NO;
+                resultDiv.append(data + "<br>");
+            
+            data = "Table_topic_duration : " + item.TABLE_TOPIC_DURATION;
+                resultDiv.append(data + "<br>");
+            
+            
+            
+        });
+    });
+
+    
+    
+}
+      function errorCB(err) {
+  alert("Error processing SQL : "+err.message);
+}     
+                   
+                       
+  
+  })
+        </script>
        <style>
         @import url('https://fonts.googleapis.com/css?family=Encode+Sans+Condensed:400,600');
+           
 * {
   outline: none;
 }
@@ -242,6 +325,8 @@ img {
        
     </head>
     <body>
+             <script type="text/javascript" src="cordova.js"></script>
+
         <div class="page">
         
   <header tabindex="0">General Information</header>
@@ -253,7 +338,7 @@ img {
     </div>
     <div id="nav-content" tabindex="0">
        <ul>
-        <li><a href="2home.html" rel="external">Home Page</a></li>
+        <li><a href="index.html" rel="external">Home Page</a></li>
         <li><a href="3create_agenda.html" rel="external">Create Agenda</a></li>
         <li><a href="#0">View/Modify Agenda</a></li>
         <li><a href="4timer.html" rel="external">Start Timer</a></li>
@@ -268,28 +353,8 @@ img {
   <main>
       <br/>
         <form>
-        <div class="a">
-        Country  : India
-        <br/>
-        <br/>
-        Locality: Kochi,Kerala
-        <br/>
-        <br/>
-        Club Name: Kochi Toastmasters
-         <br/> 
-        <br/>
-        Meeting Day : Thursday
-        <br/>
-        <br/>
-        Meeting time : 7PM
-        <br/>
-        <br/>
-        Contact Number : 1234567891
-         <br/> 
-        <br/>
-        Table Topic Duration : 15 minutes
-        <br/>
-        <br/>
+        <div class="a" id="con">
+            
         </div>
         <div class="form-row col-xs-12">
             <button onclick='location.href="10edit_general.html"'>Modify</button>

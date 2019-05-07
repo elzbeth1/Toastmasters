@@ -12,6 +12,67 @@
         <script src="js/bootstrap.min.js"></script>
        <!-- <link rel="stylesheet/less" type="text/css" href="styles.less" />
         <script src="less.min.js" ></script> -->
+        <script>
+    $(document).ready(function(){
+            var db;
+        document.addEventListener("deviceready", onDeviceReady, false);
+function onDeviceReady() {
+ 
+            alert('enteredDR');
+   window.plugins.sqlDB.copy("toastmasters.db",0,copysuccess,copyerror);
+}
+               
+    function copysuccess(){
+        alert('enteredCS');
+    db = window.sqlitePlugin.openDatabase({name: "toastmasters.db",location:'default'});
+        db.transaction(queryDB, errorCB);
+}
+               
+function copyerror(e){
+    alert('errorCE : '+JSON.stringify(e));
+    db = window.sqlitePlugin.openDatabase({name: "toastmasters.db",location:'default'});
+    db.transaction(queryDB, errorCB);
+
+}
+function queryDB(tx) {
+    
+    
+<!--Method to insert new row in the database-->
+$("#btn").click(function(){
+    
+var cty = $("#coun").val();
+    alert(cty);
+var loc=$("#loc").val();
+var cnum =$("#cnum").val();
+var cname =$("#cname").val();
+var area =$("#area").val();
+var div =$("#div").val();
+var dis =$("#dis").val();
+var mday =$("#meet").val();
+var mtime =$("#mtime").val();
+var cn = $("#cnum").val();
+var tt = $("#dur").val();
+db.transaction(function(transaction) {
+var executeQuery = "INSERT INTO GENERAL_INFORMATION (COUNTRY,LOCALITY,CLUB_NUMBER,CLUB_NAME,AREA_NAME,DIVISION_NAME,DISTRICT_NAME,MEETING_DAY,MEETING TIME,CONTACT_PHONE_NO,TABLE_TOPIC_DURATION) VALUES (?,?,?,?,?,?,?,?,?,?,?)";
+transaction.executeSql(executeQuery, [cty,loc,cnum,cname,area,div,dis,mday,mtime,cn,tt]
+, function(tx, result) {
+alert('Inserted');
+},
+function(error){
+alert('error');
+});
+ });
+}
+                
+                }
+                }
+              
+    
+ function errorCB(err) {
+  alert("Error processing SQL : "+err.message);
+}     
+      });
+        </script>
        <style>
         @import url('https://fonts.googleapis.com/css?family=Encode+Sans+Condensed:400,600');
 * {
@@ -232,7 +293,8 @@ img {
         </style>
     </head>
     <body>
-             
+              <script type="text/javascript" src="cordova.js"></script>
+    
     <div class="page">
         
   <header tabindex="0">Edit General Information</header>
@@ -244,7 +306,7 @@ img {
     </div>
     <div id="nav-content" tabindex="0">
       <ul>
-        <li><a href="2home.html" rel="external">Home Page</a></li>
+        <li><a href="index.html" rel="external">Home Page</a></li>
         <li><a href="3create_agenda.html" rel="external">Create Agenda</a></li>
         <li><a href="#0">View/Modify Agenda</a></li>
         <li><a href="4timer.html" rel="external">Start Timer</a></li>
@@ -260,16 +322,28 @@ img {
         <br/>
         <form>
         Country:
-        <input type="text" name="country" placeholder="Enter the country ">
+        <input type="text" name="country" id="coun" placeholder="Enter the country ">
      
         Locality:
-        <input type="text" name="locality" placeholder="Enter the locality ">
+        <input type="text" name="locality" id="loc" placeholder="Enter the locality ">
+            
+        Club Number:
+        <input type="text" name="club num" id="cnum" placeholder="Enter the club number ">
     
         Club Name:
-        <input type="text" name="club name" placeholder="Enter the clubname ">
-      
+        <input type="text" name="club name" id="cname" placeholder="Enter the clubname ">
+            
+        Area Name:
+        <input type="text" name="area name" id="area" placeholder="Enter the area name ">
+            
+        Division Name:
+        <input type="text" name="division name" id="div" placeholder="Enter the division name ">
+            
+        District Name:
+        <input type="text" name="district name" id="dis" placeholder="Enter the district name ">
+            
         Meeting Day:
-        <select required>
+        <select required id="meet">
         <option value="" disabled selected hidden>Select the meeting day</option>
         <option value="0">Monday</option>
         <option value="1">Tuesday</option>
@@ -281,17 +355,18 @@ img {
         </select>
        
         Meeting time:
-        <input type="time" name="usr_time">
+        <input type="time" id="mtime" name="usr_time">
        
         Contact Number:
-        <input type="number" name="contact number" placeholder="Enter the contact number ">
-        <div class="form-row col-xs-6" >    
+        <input type="number" name="contact number" id="cnum" placeholder="Enter the contact number ">
+        <div class="form-row col-xs-6" > 
+            
         Table Topic Duration(min)
-        <input type="text"/> 
+        <input type="text" id="dur"/> 
             </div>
             
         <div class="form-row col-xs-12">
-        <input type="submit" value="Modify The Details" onclick='location.href="9gen_info.html"'>
+        <input type="submit" value="Modify The Details"  id="btn" >
           </div>    
         </form> 
 

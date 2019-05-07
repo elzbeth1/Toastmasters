@@ -1,18 +1,110 @@
 <!DOCTYPE html>
+
 <html>
-    
-    <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no, width=device-width">
-        <title>Add New Toastmaster</title>
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width" />
+<title>Add New Toastmaster</title>
         <link rel="stylesheet" type="text/css" href="css/jquery.mobile-1.4.5.min.css" />
         <script src="js/jquery-1.11.1.min.js"></script>
         <script src="js/jquery.mobile-1.4.5.min.js"></script>
         <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
         <script src="js/jquery.min.js"></script>
         <script src="js/bootstrap.min.js"></script>
-       <!-- <link rel="stylesheet/less" type="text/css" href="styles.less" />
-        <script src="less.min.js" ></script> -->
+        <script>
+            
+             $(document).ready(function(){
+            var db;
+        document.addEventListener("deviceready", onDeviceReady, false);
+function onDeviceReady() {
+ 
+            alert('enteredDR');
+   window.plugins.sqlDB.copy("toastmasters.db",0,copysuccess,copyerror);
+}
+               
+    function copysuccess(){
+        alert('enteredCS');
+    db = window.sqlitePlugin.openDatabase({name: "toastmasters.db",location:'default'});
+        db.transaction(queryDB, errorCB);
+}
+               
+function copyerror(e){
+    alert('errorCE : '+JSON.stringify(e));
+    db = window.sqlitePlugin.openDatabase({name: "toastmasters.db",location:'default'});
+    db.transaction(queryDB, errorCB);
+
+}
+ 
+
+function queryDB(tx) {
+    
+    
+<!--Method to insert new row in the database-->
+$("#btn").click(function(){
+    
+     db.transaction(function(transaction) {
+    transaction.executeSql('CREATE TABLE IF NOT EXISTS TOASTMASTER(TOASTMASTER_ID VARCHAR(10) PRIMARY KEY NOT NULL,TOASTMASTER_NAME VARCHAR(50) NOT NULL,DOB DATE NOT NULL,CONTACT_PHONE_NO VARCHAR(15) NOT NULL,EMAIL_ID VARCHAR(50) NOT NULL)', [],
+        function(tx, result) {
+            alert("Table created successfully");
+        }, 
+        function(error) {
+              alert("Error occurred while creating the table.");
+        });
+    });
+    
+    /* db.transaction(function(transaction) {
+         alert('select');
+transaction.executeSql('SELECT * FROM TOASTMASTER', [], function (tx, result) {
+var len = result.rows.length, i;
+    alert('select');
+    i=result.rows.item(len-1).TOASTMASTER_ID;
+    alert('select');
+    if(i==null||len==0)
+        {
+            i=1;
+        }
+    else
+        {
+            i=i+1;
+        }
+    alert('id : '+i);
+
+}, null);
+});*/
+var id=1;  
+var name = $("#name").val();
+var date=$("#date").val();
+var num =$("#num").val();
+var email = $("#email").val();
+    
+db.transaction(function(transaction) {
+var executeQuery = "INSERT INTO TOASTMASTER (TOASTMASTER_ID,TOASTMASTER_NAME,DOB,CONTACT_PHONE_NO,EMAIL_ID) VALUES (?,?,?,?,?)";
+transaction.executeSql(executeQuery, [id,name,date,num,email]
+, function(tx, result) {
+alert('Inserted');
+
+},
+function(error){
+alert(error);
+});
+});
+    db.transaction(function(transaction) {
+transaction.executeSql('SELECT * FROM TOASTMASTER', [], function (tx, result) {
+var len = result.rows.length, i;
+for (i = 0; i < len; i++){
+    alert('Hello : '+result.rows.item(i).TOASTMASTER_NAME)
+
+}
+}, null);
+});
+});
+}
+  function errorCB(err) {
+  alert("Error processing SQL : "+err.message);
+}
+          });
+        </script>
        <style>
         @import url('https://fonts.googleapis.com/css?family=Encode+Sans+Condensed:400,600');
 * {
@@ -197,13 +289,15 @@ img {
              padding-right: 30px;
              
          }
-        </style></head>
-    
-    <body>
+        </style>    
+
+
+</head>
+
+<body>
+     <script type="text/javascript" src="cordova.js"></script>
     <div data-role="page">         
-    
-        
-  <header tabindex="0">Add new toastmaster</header>
+    <header tabindex="0">Add new toastmaster</header>
   <div id="nav-container">
     <div class="button" tabindex="0">
       <span class="icon-bar"></span>
@@ -212,7 +306,7 @@ img {
     </div>
     <div id="nav-content" tabindex="0">
        <ul>
-        <li><a href="2home.html" rel="external">Home Page</a></li>
+        <li><a href="index.html" rel="external">Home Page</a></li>
         <li><a href="3create_agenda.html" rel="external">Create Agenda</a></li>
         <li><a href="#0">View/Modify Agenda</a></li>
         <li><a href="4timer.html" rel="external">Start Timer</a></li>
@@ -225,7 +319,7 @@ img {
         </div>
             </div>  
       <main>
-      <form>
+      <form method="post">
       <div class="form-group">
           <label for="name">Enter Toastmaster Name</label>
   <input type="text" class="form-control" id="name" required/>
@@ -233,10 +327,7 @@ img {
 <div class="form-group" data-validate="Date is required">
     <label for="date">Date of Birth</label>
 					<input  type="date" id="date"/>
-					
-				</div>
-
-
+</div>
 <div class="form-group">
           <label for="email">Enter the Email-id</label>
   <input type="email" class="form-control" id="email" required/>
@@ -249,5 +340,9 @@ img {
           </form>
           </main>
         </div>
-    </body>
+   
+   
+    
+</body>
+
 </html>

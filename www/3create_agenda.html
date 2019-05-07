@@ -12,6 +12,122 @@
         <script src="js/bootstrap.min.js"></script>
        <!-- <link rel="stylesheet/less" type="text/css" href="styles.less" />
         <script src="less.min.js" ></script> -->
+        <script>
+               $(document).ready(function(){
+            var db;
+        document.addEventListener("deviceready", onDeviceReady, false);
+function onDeviceReady() {
+ 
+            alert('enteredDR');
+   window.plugins.sqlDB.copy("toastmasters.db",0,copysuccess,copyerror);
+}
+               
+    function copysuccess(){
+        alert('enteredCS');
+    db = window.sqlitePlugin.openDatabase({name: "toastmasters.db",location:'default'});
+        db.transaction(queryDB, errorCB);
+}
+               
+function copyerror(e){
+    alert('errorCE : '+JSON.stringify(e));
+    db = window.sqlitePlugin.openDatabase({name: "toastmasters.db",location:'default'});
+    db.transaction(queryDB, errorCB);
+
+}
+ 
+
+function queryDB(tx) {
+    
+    
+alert('dropdown');
+     
+    db.transaction(function(tx) {
+        tx.executeSql('SELECT * FROM SPEECH_TYPE', [], function(tx, result) {
+            dataset = result.rows;
+            for (var i = 0, item = null; i < dataset.length; i++) {
+                item = dataset.item(i);
+                selectForm.innerHTML += '<option class="'+item['SPEECH_TYPE_DESCRIPTION']+'">'+item['SPEECH_TYPE_DESCRIPTION']+'</option>';
+               
+            }
+        });
+    });
+
+$("#btn").click(function(){
+     db.transaction(function(tx) {
+         var value1;
+        tx.executeSql('SELECT * FROM MEETING', [], function(tx, result) {
+            dataset1 = result.rows;
+            len1=dataset1.length;
+            value1=dataset1.item(len1-1).MEETING_NO;
+          
+                
+        });
+        var value2;
+        tx.executeSql('SELECT * FROM MEETING_AGENDA', [], function(tx, result) {
+            dataset2 = result.rows;
+            len2=dataset2.length;
+            value2=dataset2.item(len2-1).AGENDA_ITEM_NO;
+          
+                
+        });
+    });
+
+    
+    var m_no=value1;  
+    var a_no=value2; 
+    
+    var p_no = $("#name").val();
+    var man=$("#name").val();
+    var pro=$("#name").val();
+    var title=$("#name").val();
+    var s_id=;+
+    var s_name=$("#name").val();
+    var e_id=;
+    var e_name=$("#name").val();
+    
+    var date=$("#date").val();
+    var num =$("#num").val();3
+    var email = $("#email").val();
+    
+    if ($stmt->rowCount() > 0) {
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+        $value2 = $row['empid'];
+        $value2 = substr($value2, 3, 5);
+        $value2 = (int) $value2 + 1;
+        $value2 = "EMP" . sprintf('%04s', $value2);
+        $value = $value2;
+        return $value;
+    } else {
+        $value2 = "EMP0001";
+        $value = $value2;
+        return $value;
+    }
+
+    
+db.transaction(function(transaction) {
+var executeQuery = "INSERT INTO PREPARED_SPEECH(MEETING_NO,AGENDA_ITEM_NO,PREP_SPEECH_NO,MANUAL,PROJECT,SPEECH_TITLE,SPEAKER_ID,SPEAKER_NAME,EVALUATOR_ID,EVALUATOR_NAME) VALUES(?,?,?,?,?,?,?,?,?,?)";
+transaction.executeSql(executeQuery, [id,name,date,num,email]
+, function(tx, result) {
+alert('Inserted');
+
+},
+function(error){
+alert(error);
+});
+});
+    
+}
+    
+}
+      function errorCB(err) {
+  alert("Error processing SQL : "+err.message);
+}     
+                   
+                       
+  
+  })
+</script>
+
        <style>
         @import url('https://fonts.googleapis.com/css?family=Encode+Sans+Condensed:400,600');
 form{
@@ -231,23 +347,33 @@ img {
   height: auto;
   width: 100%;
 }
-form{display:none} 
+
 </style>
-<script>
+      <script>
     $(document).ready(function(){
   
-        $('#selectForm').change(function(){
-        var formID = $(this).val();
+      $('#selectForm').change(function(){
+            
+        var formID = document.getElementById('selectForm').value;
+          
         $('form').css('display','none');
-        $('#'+formID).css('display','block');
+        if(formID==="Prepared Speech Session")
+              {
+              
+        $('#Prepared-Speech-Session').css('display','block');
+              }
+          else
+              {
+                   $('#speech').css('display','block');
+              }
 })
   
   })
 </script>
-      
     </head>
     <body>
-        
+           <script type="text/javascript" src="cordova.js"></script>
+  
     <div class="page">
         
   <header tabindex="0">Create Agenda</header>
@@ -259,7 +385,7 @@ form{display:none}
     </div>
     <div id="nav-content" tabindex="0">
       <ul>
-        <li><a href="2home.html" rel="external">Home Page</a></li>
+        <li><a href="index.html" rel="external">Home Page</a></li>
         <li><a href="3create_agenda.html" rel="external">Create Agenda</a></li>
         <li><a href="#0">View/Modify Agenda</a></li>
         <li><a href="4timer.html" rel="external">Start Timer</a></li>
@@ -283,7 +409,7 @@ form{display:none}
                 }
                 else if(n==1)
                     {
-                        d.setDate(d.etDate()+3);
+                        d.setDate(d.getDate()+3);
                     }
                 else if(n==2)
                     {
@@ -305,16 +431,13 @@ form{display:none}
             </script>
             <label for="speechType">Speech Type:</label>
             <select name="speechType" id="selectForm">
-                <option value="" disabled selected hidden>Select The Speech Type</option>
-                <option value="introduction">Introduction</option>
-                <option value="tableTopic">Table Topic Speech</option>
-                <option value="prepared">Prepared Speech</option>
-                <option value="evaluator">Evaluator Speech</option>
+                
+          
             </select>
   
 
 
-<form name="firstForm" id="introduction" action="">
+<form name="firstForm" id="speech" action="">
     <label for="speakerName">Speaker Name:</label>
             <select name="speakerName">
                 <option value="" disabled selected hidden>Select The Speaker Name</option>
@@ -338,49 +461,21 @@ form{display:none}
          <button type="submit" class="btn btn-primary active" onclick="addRecord()">ADD</button>
 </form>
            
-<form name="secondForm" id="tableTopic" action="">
-    <label for="speakerName">Speaker Name:</label>
-            <select name="speakerName">
-                <option value="" disabled selected hidden>Select The Speaker Name</option>
-                <option value="name-1">Elzabeth Thomas</option>
-                <option value="name-2">Gopika Gopakumar</option>
-                <option value="name-3">Greeta Jobson</option>
-                <option value="name-4">Kavya Gopalakrishnan</option>
-            </select>
-            <div class="form-row">
-                <div class="form-group col-xs-6">
-                    <label for="startTime">Time Duration</label>
-                    <!--use step="1" to show seconds-->
-                    <input type="time" class="without_ampm"/>
-                </div>
-                <div class="form-group col-xs-6">
-                    <label for="startTime">Start Time</label>
-                    <!--use step="1" to show seconds-->
-                    <input type="time"/>
-                </div>
-            </div>
-          <button type="button" class="btn btn-primary active">ADD</button>
-
-</form>
-      <form  method="post"  name="thirdForm" id="prepared" action="">
+      <form  method="post"  name="thirdForm" id="Prepared-Speech-Session" action="">
  <label for="manual">Manual:</label>
-    <select name="manual">
+    <select name="manual" id="manual">
                 <option value="" disabled selected hidden>Select The Manual</option>
-                <option value="name-1">Elzabeth Thomas</option>
-                <option value="name-2">Gopika Gopakumar</option>
-                <option value="name-3">Greeta Jobson</option>
-                <option value="name-4">Kavya Gopalakrishnan</option>
+                <option value="name-1">Competant leadership</option>
+                <option value="name-2">Competant communicator</option>
             </select>
      <label for="project">Project:</label>
-    <select name="project">
+    <select name="project" id="project">
                 <option value="" disabled selected hidden>Select The Project</option>
-                <option value="name-1">Elzabeth Thomas</option>
-                <option value="name-2">Gopika Gopakumar</option>
-                <option value="name-3">Greeta Jobson</option>
-                <option value="name-4">Kavya Gopalakrishnan</option>
+                <option value="name-1">Critical thinking</option>
+                <option value="name-2">Time management</option>
             </select>
      <label for="speakerName">Speaker Name:</label>
-    <select name="speakerName">
+    <select name="speakerName" id="speakerName">
                 <option value="" disabled selected hidden>Select The Speaker Name</option>
                 <option value="name-1">Elzabeth Thomas</option>
                 <option value="name-2">Gopika Gopakumar</option>
@@ -389,9 +484,9 @@ form{display:none}
             </select>
     <label for="speechTitle">Speech Title:</label>
     
-    <input type="text" name="speechTitle" placeholder="Enter the Speech Title"/>
+    <input type="text" id="speechTitle" name="speechTitle" placeholder="Enter the Speech Title"/>
     <label for="evaluator">Evaluator for the speech:</label>
-    <select name="evaluator">
+    <select name="evaluator" id="evaluator">
                 <option value="" disabled selected hidden>Select The Evaluator Name</option>
                 <option value="name-1">Elzabeth Thomas</option>
                 <option value="name-2">Gopika Gopakumar</option>
@@ -411,35 +506,11 @@ form{display:none}
                     <input type="time"/>
                 </div>
             </div>
-           <button type="button" class="btn btn-primary active">ADD</button>
+           <button type="button" class="btn btn-primary active" id="btn">ADD</button>
 
 
 </form>
           
-      <form name="fourthForm" id="evaluator" action="">
-    <label for="speakerName">Speaker Name:</label>
-            <select name="speakerName">
-                <option value="" disabled selected hidden>Select The Speaker Name</option>
-                <option value="name-1">Elzabeth Thomas</option>
-                <option value="name-2">Gopika Gopakumar</option>
-                <option value="name-3">Greeta Jobson</option>
-                <option value="name-4">Kavya Gopalakrishnan</option>
-            </select>
-            <div class="form-row">
-                <div class="form-group col-xs-6">
-                    <label for="startTime">Time Duration</label>
-                    <!--use step="1" to show seconds-->
-                    <input type="time" class="without_ampm"/>
-                </div>
-                <div class="form-group col-xs-6">
-                    <label for="startTime">Start Time</label>
-                    <!--use step="1" to show seconds-->
-                    <input type="time"/>
-                </div>
-            </div>
-           <button type="button" class="btn btn-primary active">ADD</button>
-         
-</form>
          
            <button type="button" class="btn btn-primary active">VIEW AGENDA</button>
 

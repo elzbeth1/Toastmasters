@@ -12,7 +12,197 @@
         <script src="js/bootstrap.min.js"></script>
        <!-- <link rel="stylesheet/less" type="text/css" href="styles.less" />
         <script src="less.min.js" ></script> -->
-       <style>
+       <script>
+           $(document).ready(function(){
+               
+              
+            var db,time,speech,name,min,max,warn,agenda,g,a,r,buzz,buzz1,buzz2,b1,b2;
+        document.addEventListener("deviceready", onDeviceReady, false);
+function onDeviceReady() { 
+    
+   var macAddress="20:18:07:13:58:62";
+    window.plugins.sqlDB.copy("toastmasters.db",0,copysuccess,copyerror);
+    
+ bluetoothSerial.connectInsecure(macAddress,
+                         function(){
+     alert('Bluetooth connected');
+ },
+                        function(){
+     
+     bluetoothSerial.connectInsecure(macAddress,
+                         function(){
+     alert('Bluetooth connected');
+ },
+                        function(){
+    /*alert('not connected');*/
+ });
+ });
+          
+   
+}
+               
+   function copysuccess(){
+        
+    db = window.sqlitePlugin.openDatabase({name: "toastmasters.db",location:'default'});
+        db.transaction(queryDB, errorCB);
+}
+               
+function copyerror(e){
+   /* alert('errorCE : '+JSON.stringify(e));*/
+    db = window.sqlitePlugin.openDatabase({name: "toastmasters.db",location:'default'});
+    db.transaction(queryDB, errorCB);
+}
+ 
+
+function queryDB(transaction){
+    
+     db.transaction(function(transaction) {
+    var executeQuery = "SELECT * FROM MEETING_AGENDA WHERE FLAG IS NULL";
+    transaction.executeSql(executeQuery, [],
+      //On Success
+      function(transaction, result) {
+                           var len = result.rows.length;
+        
+                            agenda=result.rows.item(0).AGENDA_ITEM_NO;
+                            speech=result.rows.item(0).SPEECH_TYPE_DESCRIPTION;
+                            document.getElementById("speech").innerHTML=speech;
+                            name= result.rows.item(0).TOASTMASTER_NAME;
+                            document.getElementById("name").innerHTML=name;
+                            
+        }, 
+      //On Error
+      function(error){alert('Something went Wrong');}); 
+  });
+    
+    db.transaction(function(transaction) {
+    var executeQuery = "SELECT * FROM SPEECH_TYPE WHERE SPEECH_TYPE_DESCRIPTION=?";
+    transaction.executeSql(executeQuery, [speech],
+      //On Success
+      function(transaction, result) {
+                        min  = Number(result.rows.item(0).MINIMUM_TIME)*60*1000;
+                        max  = Number(result.rows.item(0).MAXIMUM_TIME)*60*1000;
+                        warn = Number(result.rows.item(0).WARNING_TIME)*60*1000;
+                        buzz = max+30000;   
+                        buzz1=buzz+30000;
+                        buzz2=buzz1+30000;
+                        
+            }, 
+      //On Error
+      function(error){alert('Something went Wrong');});
+  });
+    
+  
+$("#btns").click(function(){
+    alert("started");
+    
+var tim=new Date($.now());
+     time = tim.getHours() + ":" + tim.getMinutes() + ":" + tim.getSeconds();
+    alert('Actual Start time: '+time);
+    
+  db.transaction(function(transaction) {
+    var executeQuery = "UPDATE MEETING_AGENDA SET ACTUAL_START_TIME =? WHERE AGENDA_ITEM_NO =?";
+    transaction.executeSql(executeQuery, [time,agenda],
+      //On Success
+      function(transaction, result) {alert('Actual Start TIme Updated successfully');
+                           
+                           
+                           }, 
+      //On Error
+      function(error){alert('Something went Wrong');});
+  });
+    
+     g=setTimeout(function(){
+                    bluetoothSerial.write("G",function(){/*alert('green');*/},function(){alert('not green');});
+                    
+}, min);
+     a=setTimeout(function(){ 
+                             bluetoothSerial.write("Y",
+                                          function(){
+                                /* alert('amber');*/
+                        
+                    },
+                                          function(){
+                        alert('amber not');
+                    });}, warn);
+     r=setTimeout(function(){  
+                             bluetoothSerial.write("R",
+                                          function(){
+                                /* alert('red');*/
+                        
+                    },
+                                          function(){
+                        alert('red not');
+                    });}, max);
+     b=setTimeout(function(){ 
+                             bluetoothSerial.write("B",
+                                          function(){
+                        
+                    },
+                                          function(){
+                        alert('buz  not');
+                    });},buzz);
+     b1=setTimeout(function(){ 
+                              bluetoothSerial.write("B",
+                                          function(){
+                        
+                    },
+                                          function(){
+                        alert('green not');
+                    });},buzz1);
+     b2=setTimeout(function(){ 
+                              bluetoothSerial.write("B",
+                                          function(){
+                        
+                    },
+                                          function(){
+                        alert('green not');
+                    });},buzz2);
+    
+
+    });
+    $("#btnst").click(function(){
+        alert('stopped');
+         bluetoothSerial.write("O",
+                                          function(){
+                       /* alert('OFF');*/
+                    },
+                                          function(){
+                        alert('not OFF');
+                    });
+        clearTimeout(g);
+        clearTimeout(a);
+        clearTimeout(r);
+        clearTimeout(b);
+        clearTimeout(b1);
+        clearTimeout(b2);
+        tim1= new Date($.now());
+        time1=tim1.getHours()+':' +tim1.getMinutes() +':' +tim1.getSeconds();
+        alert(time1);
+        var Q=1;
+        db.transaction(function(transaction){
+            var executeQuery="UPDATE MEETING_AGENDA SET ACTUAL_END_TIME=?,FLAG=? WHERE AGENDA_ITEM_NO=?";
+            transaction.executeSql(executeQuery,[time1,Q,agenda],
+                function(tx,result){alert('updated');
+                                   },
+                function(error){
+                alert('Something went Wrong');
+            });
+        });
+       /* var dur=(tim1.getHours()-tim.getHours())+':'+(tim1.getMinutes()-tim.getMinutes())+':'+(tim1.getSeconds()-tim.getSeconds());
+        alert('duration of the speech is'+dur); */
+    });
+   
+        
+    }
+    
+
+function errorCB(err) {
+  alert("Error processing SQL : "+err.message);
+} 
+
+ });
+</script>
+        <style>
         @import url('https://fonts.googleapis.com/css?family=Encode+Sans+Condensed:400,600');
 
 * {
@@ -26,8 +216,7 @@ strong {
 .page {
   width: 100%;
   height: 100vh;
- 
-  font-family: 'Encode Sans Condensed', sans-serif;
+ font-family: 'Encode Sans Condensed', sans-serif;
   font-weight: 600;
   letter-spacing: .03em;
   color: #000;
@@ -59,20 +248,12 @@ main > div {
   max-width: 600px;
 }
 
-main h2 span {
-  color: #BF7497;
-}
-
 main p {
-  line-height: 1.5;
-  font-weight: 200;
-  margin: 20px 0;
+  line-height: normal;
+  font-weight: 400;
 }
 
-main small {
-  font-weight: 300;
-  color: #888;
-}
+
 
 #nav-container {
   position: fixed;
@@ -215,9 +396,7 @@ a {
   transition: .2s ease-in-out;
 }
 
-h1, h2, h3, h4 {
-  margin: 0;
-}
+
 
 ul {
   padding: 0;
@@ -257,8 +436,9 @@ img {
                 width: 80px;
                 height: 80px;
                 padding: 5px;
-                border: 1px solid blue;    
-                background-color: limegreen; 
+                border: 1px solid limegreen;    
+                background-color:limegreen;
+                opacity :0.2;
                 align-items: center;
             }
 
@@ -267,8 +447,9 @@ img {
                 width: 80px;
                 height: 80px;
                 padding: 5px;
-                border: 1px solid blue;    
-                background-color: yellow; 
+                border: 1px solid yellow;    
+                background-color: yellow;
+                opacity:0.2;
                 align-items: center;
             }
             span.c {
@@ -276,23 +457,27 @@ img {
                 width: 80px;
                 height: 80px;
                 padding: 5px;
-                border: 1px solid blue;    
-                background-color: red; 
+                border: 1px solid red;    
+                background-color: red;
+                opacity:0.2;
+                 
                 align-items: center;
             }           
-            div.a {
+            #a1 {
+                    margin 400px, 0px, 0px, 0px;
                     float: left;
                 }
 
-            div.b {
+        /*    #b1 {
                     float: right;
-                }
+                } */
             
         </style>
 
     </head>
     <body>
-       
+               <script type="text/javascript" src="cordova.js"></script>
+
     <div class="page">
         
         
@@ -305,7 +490,7 @@ img {
     </div>
     <div id="nav-content" tabindex="0">
        <ul>
-        <li><a href="2home.html" rel="external">Home Page</a></li>
+        <li><a href="index.html" rel="external">Home Page</a></li>
         <li><a href="3create_agenda.html" rel="external">Create Agenda</a></li>
         <li><a href="#0">View/Modify Agenda</a></li>
         <li><a href="4timer.html" rel="external">Start Timer</a></li>
@@ -318,12 +503,9 @@ img {
     </div>
   </div>
   <main>
-  
-           
-    
-        <form>
-        <div class="a">
-            <p id="a"></p>
+      
+        <p id="a1"></p>
+            
             <script>
                 var d = new Date();
                 var n = d.getDay();
@@ -351,43 +533,39 @@ img {
                     {
                         d.setDate(d.getDate()+5)
                     }
-                    document.getElementById("a").innerHTML = d.toDateString();
+                    document.getElementById("a1").innerHTML = d.toDateString();
             </script>
-        </div> 
-        <div class="b">
+         
+      
+       <!-- <p id="b1">
         MEETING N0:123
-        </div>
-        <div style="clear: both;"></div>
+        </p> -->
+        
         <br/>
         Type of Speech:
-        <select required>
-        <option value="" disabled selected hidden>Select</option>
-        <option>Introduction</option>
-        <option>Table Topic</option>
-        <option>Prepared Speech</option>
-        <option>Evaluation</option>
-        </select>
-        </form>
-       <p>Name of the Speaker : </p>
+            <p id="speech"></p>
+        
+      Name of the Speaker : 
+       <p id="name"></p>
              
                 <div class="form-row">
-                    <button data-inline="true">     Start     </button>
-                    <button data-inline="true">     Pause     </button>
-                   <button data-inline="true">     Stop     </button>
+                    <button data-inline="true" id="btns">     Start     </button>
+                    
+                   <button data-inline="true" id="btnst">     Stop     </button>
       </div>
                <div class="form-row">
-               <span data-inline="true" class="a">1</span> 
-               <span data-inline="true" class="b">2</span>
-               <span data-inline="true" class="c">3</span>
+               <span data-inline="true" class="a"></span> 
+               <span data-inline="true" class="b"></span>
+               <span data-inline="true" class="c"></span>
                    
          </div>
                 
                 <div class="form-row">
-                    <a href="timer.html" data-role="button" data-inline="true">Next</a>
-                    <a href="timer.html" data-role="button" data-inline="true">Absent</a>
-                    <a href="timer.html" data-role="button" data-inline="true">Adjourned</a>
+                    <a href="4timer.html" rel="external" data-role="button" data-inline="true" id="nxbtn">Next</a>
+                    <a href="4timer.html" rel="external" data-role="button" data-inline="true">Absent</a>
+                    <a href="index.html" rel="external" data-role="button" data-inline="true">Adjourned</a>
                 </div>
-        
+       
            </main>
            </div>
     </body>
