@@ -105,10 +105,8 @@
         <allow-intent href="itms:*" />
         <allow-intent href="itms-apps:*" />
     </platform>
-    <plugin name="cordova-sqlite-storage" spec="3.2.0" />
+    <plugin name="cordova-sqlite-storage" spec="~3.2.0" />
     <plugin name="cordova-plugin-dbcopy" spec="https://github.com/an-rahulpandey/cordova-plugin-dbcopy.git" />
-    <engine name="ios" spec="~4.5.5" />
-    <engine name="browser" spec="~5.0.4" />
-    <engine name="android" spec="~7.1.4" />
-    <plugin name="cordova-plugin-sqlite-2" spec="1.0.6" />
+    <plugin name="cordova-plugin-bluetooth-serial" spec="0.4.7" />
+    <engine name="android" spec="^7.1.4" />
 </widget>

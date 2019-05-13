@@ -387,11 +387,11 @@ module.exports = [
     ]
   },
   {
-    "id": "cordova-plugin-sqlite-2.sqlitePlugin",
-    "file": "plugins/cordova-plugin-sqlite-2/dist/sqlite-plugin.js",
-    "pluginId": "cordova-plugin-sqlite-2",
+    "id": "cordova-plugin-bluetooth-serial.bluetoothSerial",
+    "file": "plugins/cordova-plugin-bluetooth-serial/www/bluetoothSerial.js",
+    "pluginId": "cordova-plugin-bluetooth-serial",
     "clobbers": [
-      "sqlitePlugin"
+      "window.bluetoothSerial"
     ]
   }
 ];
@@ -411,7 +411,7 @@ module.exports.metadata =
   "cordova-plugin-network-information": "1.3.4",
   "cordova-plugin-vibration": "2.1.6",
   "cordova-sqlite-storage": "3.2.0",
-  "cordova-plugin-sqlite-2": "1.0.6"
+  "cordova-plugin-bluetooth-serial": "0.4.7"
 };
 // BOTTOM OF METADATA
 });

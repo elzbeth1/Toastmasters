@@ -3,17 +3,187 @@
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no, width=device-width">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <title>Create Agenda</title>
-        <link rel="stylesheet" href="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css" />
-        <script src="http://code.jquery.com/jquery-1.11.1.min.js"></script>
-        <script src="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
-        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
-        <link rel="stylesheet/less" href="/stylesheets/main.less" type="text/css" />
-      
-        <style>
+        <link rel="stylesheet" type="text/css" href="css/jquery.mobile-1.4.5.min.css" />
+        <script src="js/jquery-1.11.1.min.js"></script>
+        <script src="js/jquery.mobile-1.4.5.min.js"></script>
+        <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
+        <script src="js/jquery.min.js"></script>
+        <script src="js/bootstrap.min.js"></script>
+       <!-- <link rel="stylesheet/less" type="text/css" href="styles.less" />
+        <script src="less.min.js" ></script> -->
+        <script>
+               $(document).ready(function(){
+
+            var db;
+        document.addEventListener("deviceready", onDeviceReady, false);
+function onDeviceReady() {
+ 
+            alert('enteredDR');
+   window.plugins.sqlDB.copy("toastmasters.db",0,copysuccess,copyerror);
+}
+               
+    function copysuccess(){
+        alert('enteredCS');
+    db = window.sqlitePlugin.openDatabase({name: "toastmasters.db",location:'default'});
+        db.transaction(queryDB, errorCB);
+}
+               
+function copyerror(e){
+    alert('errorCE : '+JSON.stringify(e));
+    db = window.sqlitePlugin.openDatabase({name: "toastmasters.db",location:'default'});
+    db.transaction(queryDB, errorCB);
+
+}
+ 
+
+function queryDB(tx) {
+    
+    
+alert('dropdown');
+ 
+    db.transaction(function(tx) {
+        tx.executeSql('SELECT * FROM SPEECH_TYPE', [], function(tx, result) {
+            var dataset = result.rows;
+            
+            for (var i = 0, item = null; i < dataset.length; i++) {
+                item = dataset.item(i);
+                selectForm.innerHTML += '<option value="'+item['SPEECH_TYPE_DESCRIPTION']+'">'+item['SPEECH_TYPE_DESCRIPTION']+'</option>';
+               
+            }
+        }, 
+      //On Error
+      function(error){alert('Something went Wrong');});
+    });
+    
+      $('#selectForm').change(function(){
+            
+        var formID = document.getElementById('selectForm').value;
+              db.transaction(function(tx) {
+        tx.executeSql('SELECT * FROM SPEECH_TYPE WHERE SPEECH_TYPE_DESCRIPTION=?', [formID], function(tx, result) {
+            var dataset = result.rows;
+            var item = dataset.item(0).MAXIMUM_TIME;
+            alert('item:'+item);
+               document.getElementById("timeDur").innerHTML=item;
+            }
+        , 
+      //On Error
+      function(error){alert('Something went Wrong');}) ;
+              });
+    
+        
+      });
+    
+    
+  $("#btn").click(function(){  
+  
+   db.transaction(function(tx) {
+         var value1;
+        tx.executeSql('SELECT * FROM MEETING', [], function(tx, result) {
+            dataset1 = result.rows;
+            len1=dataset1.length;
+            value1=dataset1.item(len1-1).MEETING_NO;
+          
+                
+        });
+        var value2;
+        tx.executeSql('SELECT * FROM MEETING_AGENDA', [], function(tx, result) {
+            dataset2 = result.rows;
+            len2=dataset2.length;
+            value2=dataset2.item(len2-1).AGENDA_ITEM_NO;
+          
+                
+        });
+    });
+    
+  
+  
+  });
+    
+    
+/*
+
+$("#btn").click(function(){
+     db.transaction(function(tx) {
+         var value1;
+        tx.executeSql('SELECT * FROM MEETING', [], function(tx, result) {
+            dataset1 = result.rows;
+            len1=dataset1.length;
+            value1=dataset1.item(len1-1).MEETING_NO;
+          
+                
+        });
+        var value2;
+        tx.executeSql('SELECT * FROM MEETING_AGENDA', [], function(tx, result) {
+            dataset2 = result.rows;
+            len2=dataset2.length;
+            value2=dataset2.item(len2-1).AGENDA_ITEM_NO;
+          
+                
+        });
+    });
+    
+    
+ 
+    var m_no=value1;  
+    var a_no=value2; 
+    
+    var p_no = $("#name").val();
+    var man=$("#name").val();
+    var pro=$("#name").val();
+    var title=$("#name").val();
+    var s_id=;
+    var s_name=$("#name").val();
+    var e_id=;
+    var e_name=$("#name").val();
+    
+    var date=$("#date").val();
+    var num =$("#num").val();
+    var email = $("#email").val();
+  
+    if ($stmt->rowCount() > 0) {
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+        $value2 = $row['empid'];
+        $value2 = substr($value2, 3, 5);
+        $value2 = (int) $value2 + 1;
+        $value2 = "EMP" . sprintf('%04s', $value2);
+        $value = $value2;
+        return $value;
+    } else {
+        $value2 = "EMP0001";
+        $value = $value2;
+        return $value;
+    }
+    
+
+    
+db.transaction(function(transaction) {
+var executeQuery = "INSERT INTO PREPARED_SPEECH(MEETING_NO,AGENDA_ITEM_NO,PREP_SPEECH_NO,MANUAL,PROJECT,SPEECH_TITLE,SPEAKER_ID,SPEAKER_NAME,EVALUATOR_ID,EVALUATOR_NAME) VALUES(?,?,?,?,?,?,?,?,?,?)";
+transaction.executeSql(executeQuery, [id,name,date,num,email]
+, function(tx, result) {
+alert('Inserted');
+
+},
+function(error){
+alert(error);
+});
+});
+    */
+
+    
+
+   
+}
+function errorCB(err) {
+  alert("Error processing SQL : "+err.message);
+}     
+                   
+                       
+  
+  });
+</script>
+
+       <style>
         @import url('https://fonts.googleapis.com/css?family=Encode+Sans+Condensed:400,600');
 form{
     display:none
@@ -232,42 +402,34 @@ img {
   height: auto;
   width: 100%;
 }
-form{display:none} 
+
 </style>
-        <script type="text/javascript" src="cordova.js"></script>
-<script type="text/javascript">
-    document.addEventListener('deviceready', onDeviceReady, false);
-    
-   var app = {};
-app.db = null;
-
-app.openDb = function() {
-  var dbName = "toastmasters.db";
-  app.db = window.sqlitePlugin.openDatabase({name: dbName, createFromLocation: 1});
-}
-app.createTable = function() {
-	var db = app.db;
-	db.transaction(function(tx) {
-		tx.executeSql("CREATE TABLE IF NOT EXISTS " + 
-		"todo(ID INTEGER PRIMARY KEY ASC, todo TEXT, added_on DATETIME)", []);
-	});
-}     </script>
-        <script>
-
+      <script>
     $(document).ready(function(){
   
-        $('#selectForm').change(function(){
-        var formID = $(this).val();
+      $('#selectForm').change(function(){
+            
+        var formID = document.getElementById('selectForm').value;
+          
+          
         $('form').css('display','none');
-        $('#'+formID).css('display','block');
+        if(formID==="Prepared Speech Session")
+              {
+              
+        $('#Prepared-Speech-Session').css('display','block');
+              }
+          else
+              {
+                   $('#speech').css('display','block');
+              }
 })
   
   })
 </script>
-      
     </head>
     <body>
-        
+           <script type="text/javascript" src="cordova.js"></script>
+  
     <div class="page">
         
   <header tabindex="0">Create Agenda</header>
@@ -279,7 +441,7 @@ app.createTable = function() {
     </div>
     <div id="nav-content" tabindex="0">
       <ul>
-        <li><a href="2home.html" rel="external">Home Page</a></li>
+        <li><a href="index.html" rel="external">Home Page</a></li>
         <li><a href="3create_agenda.html" rel="external">Create Agenda</a></li>
         <li><a href="#0">View/Modify Agenda</a></li>
         <li><a href="4timer.html" rel="external">Start Timer</a></li>
@@ -293,36 +455,83 @@ app.createTable = function() {
   </div>
   <main>
         
-            <label for="date">Date:</label>
-            <input id="date" type="date"/>
+            <p id="demo">Date:</p>
+            <script>
+                var d = new Date();
+                var n = d.getDay();
+                if(n==0)
+                {
+                    d.setDate(d.getDate() + 4);
+                }
+                else if(n==1)
+                    {
+                        d.setDate(d.getDate()+3);
+                    }
+                else if(n==2)
+                    {
+                        d.setDate(d.getDate()+2);
+                    }
+                else if(n==3)
+                    {
+                        d.setDate(d.getDate()+1);
+                    }
+                else if(n==5)
+                    {
+                        d.setDate(d.getDate()+6);
+                    }
+                else if(n==6)
+                    {
+                        d.setDate(d.getDate()+5)
+                    }
+                    document.getElementById("demo").innerHTML = d.toDateString();
+            </script>
             <label for="speechType">Speech Type:</label>
             <select name="speechType" id="selectForm">
-                <option value="" disabled selected hidden>Select The Speech Type</option>
-                <option value="type-1">Introduction</option>
-                <option value="type-2">Table Topic Speech</option>
-                <option value="type-3">Prepared Speech</option>
-                <option value="type-4">Evaluator Speech</option>
+                
+                <option value="" selected disabled hidden>Select Speech Type</option>
             </select>
   
-<form  method="post"  name="firstform" id="type-3" action="">
- <label for="manual">Manual:</label>
-    <select name="manual">
-                <option value="" disabled selected hidden>Select The Manual</option>
+
+
+<form name="firstForm" id="speech" action="">
+    <label for="speakerName">Speaker Name:</label>
+            <select name="speakerName">
+                <option value="" disabled selected hidden>Select The Speaker Name</option>
                 <option value="name-1">Elzabeth Thomas</option>
                 <option value="name-2">Gopika Gopakumar</option>
                 <option value="name-3">Greeta Jobson</option>
                 <option value="name-4">Kavya Gopalakrishnan</option>
+            </select>
+       <div class="form-row">
+                <div class="form-group col-xs-6">
+                    <label for="timeDur">Time Duration</label>
+                    <!--use step="1" to show seconds-->
+                    <input id="timeDur" type="time" class="without_ampm" readonly/>
+                </div>
+                <div class="form-group col-xs-6">
+                    <label for="startTime">Start Time</label>
+                    <!--use step="1" to show seconds-->
+                    <input id="startTime" type="time" readonly/>
+                </div>
+            </div>
+      <button type="submit" class="btn btn-primary active" id="btnspeech">ADD</button>
+</form>
+           
+      <form  method="post"  name="thirdForm" id="Prepared-Speech-Session" action="">
+ <label for="manual">Manual:</label>
+    <select name="manual" id="manual">
+                <option value="" disabled selected hidden>Select The Manual</option>
+                <option value="name-1">Competant leadership</option>
+                <option value="name-2">Competant communicator</option>
             </select>
      <label for="project">Project:</label>
-    <select name="project">
+    <select name="project" id="project">
                 <option value="" disabled selected hidden>Select The Project</option>
-                <option value="name-1">Elzabeth Thomas</option>
-                <option value="name-2">Gopika Gopakumar</option>
-                <option value="name-3">Greeta Jobson</option>
-                <option value="name-4">Kavya Gopalakrishnan</option>
+                <option value="name-1">Critical thinking</option>
+                <option value="name-2">Time management</option>
             </select>
      <label for="speakerName">Speaker Name:</label>
-    <select name="speakerName">
+    <select name="speakerName" id="speakerName">
                 <option value="" disabled selected hidden>Select The Speaker Name</option>
                 <option value="name-1">Elzabeth Thomas</option>
                 <option value="name-2">Gopika Gopakumar</option>
@@ -331,9 +540,9 @@ app.createTable = function() {
             </select>
     <label for="speechTitle">Speech Title:</label>
     
-    <input type="text" name="speechTitle" placeholder="Enter the Speech Title"/>
+    <input type="text" id="speechTitle" name="speechTitle" placeholder="Enter the Speech Title"/>
     <label for="evaluator">Evaluator for the speech:</label>
-    <select name="evaluator">
+    <select name="evaluator" id="evaluator">
                 <option value="" disabled selected hidden>Select The Evaluator Name</option>
                 <option value="name-1">Elzabeth Thomas</option>
                 <option value="name-2">Gopika Gopakumar</option>
@@ -353,84 +562,11 @@ app.createTable = function() {
                     <input type="time"/>
                 </div>
             </div>
-           <button type="button" class="btn btn-primary active">ADD</button>
+           <button type="button" class="btn btn-primary active" id="btn">ADD</button>
 
-
-</form>
-
-<form name="secondform" id="type-1" action="">
-    <label for="speakerName">Speaker Name:</label>
-            <select name="speakerName">
-                <option value="" disabled selected hidden>Select The Speaker Name</option>
-                <option value="name-1">Elzabeth Thomas</option>
-                <option value="name-2">Gopika Gopakumar</option>
-                <option value="name-3">Greeta Jobson</option>
-                <option value="name-4">Kavya Gopalakrishnan</option>
-            </select>
-            <div class="form-row">
-                <div class="form-group col-xs-6">
-                    <label for="startTime">Time Duration</label>
-                    <!--use step="1" to show seconds-->
-                    <input type="time" class="without_ampm"/>
-                </div>
-                <div class="form-group col-xs-6">
-                    <label for="startTime">Start Time</label>
-                    <!--use step="1" to show seconds-->
-                    <input type="time"/>
-                </div>
-            </div>
-         <button type="button" class="btn btn-primary active">ADD</button>
-</form>
-           
-<form name="thirdform" id="type-2" action="">
-    <label for="speakerName">Speaker Name:</label>
-            <select name="speakerName">
-                <option value="" disabled selected hidden>Select The Speaker Name</option>
-                <option value="name-1">Elzabeth Thomas</option>
-                <option value="name-2">Gopika Gopakumar</option>
-                <option value="name-3">Greeta Jobson</option>
-                <option value="name-4">Kavya Gopalakrishnan</option>
-            </select>
-            <div class="form-row">
-                <div class="form-group col-xs-6">
-                    <label for="startTime">Time Duration</label>
-                    <!--use step="1" to show seconds-->
-                    <input type="time" class="without_ampm"/>
-                </div>
-                <div class="form-group col-xs-6">
-                    <label for="startTime">Start Time</label>
-                    <!--use step="1" to show seconds-->
-                    <input type="time"/>
-                </div>
-            </div>
-          <button type="button" class="btn btn-primary active">ADD</button>
 
 </form>
           
-      <form name="fourthform" id="type-4" action="">
-    <label for="speakerName">Speaker Name:</label>
-            <select name="speakerName">
-                <option value="" disabled selected hidden>Select The Speaker Name</option>
-                <option value="name-1">Elzabeth Thomas</option>
-                <option value="name-2">Gopika Gopakumar</option>
-                <option value="name-3">Greeta Jobson</option>
-                <option value="name-4">Kavya Gopalakrishnan</option>
-            </select>
-            <div class="form-row">
-                <div class="form-group col-xs-6">
-                    <label for="startTime">Time Duration</label>
-                    <!--use step="1" to show seconds-->
-                    <input type="time" class="without_ampm"/>
-                </div>
-                <div class="form-group col-xs-6">
-                    <label for="startTime">Start Time</label>
-                    <!--use step="1" to show seconds-->
-                    <input type="time"/>
-                </div>
-            </div>
-           <button type="button" class="btn btn-primary active">ADD</button>
-         
-</form>
          
            <button type="button" class="btn btn-primary active">VIEW AGENDA</button>
 
