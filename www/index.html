@@ -13,24 +13,118 @@
        <!-- <link rel="stylesheet/less" type="text/css" href="styles.less" />
         <script src="less.min.js" ></script> -->
         <script>
+            
             $(document).ready(function(){
+                var dd,d1;
+               // alert('document');
+              var d = new Date();
+                var n = d.getDay();
+                if(n==0)
+                {
+                   dd=d.getDate()+4;
+                }
+                else if(n==1)
+                    {
+                        dd=d.getDate()+3;
+                    }
+                else if(n==2)
+                    {
+                        dd=d.getDate()+2;
+                    }
+                else if(n==3)
+                    {
+                        dd=d.getDate()+1;
+                    }
+                else if(n==4)
+                    {
+                        dd=d.getDate()+0;
+                    }
+                else if(n==5)
+                    {
+                        dd=d.getDate()+6;
+                    }
+                else if(n==6)
+                    {
+                        dd=d.getDate()+5;
+                    }
+          
+                
+       var MM = d.getMonth(); //yields month
+     if(MM==0)
+         {
+             MM='01';
+         }
+    else if(MM==1)
+         {
+             MM='02';
+         }
+   else if(MM==2)
+         {
+             MM='03';
+         }
+    else if(MM==3)
+         {
+             MM='04';
+         }
+    else if(MM==4)
+         {
+             MM='05';
+         }
+   else if(MM==5)
+         {
+             MM='06';
+         }
+   else if(MM==6)
+         {
+             MM='07';
+         }
+   else if(MM==7)
+         {
+             MM='08';
+         }
+   else if(MM==8)
+         {
+             MM='09';
+         }
+     else if(MM==9)
+         {
+             MM='10'
+             
+         }
+     else if(MM==10)
+         {
+             MM='11'
+             
+         }
+     else if(MM==11)
+         {
+             MM='12'
+             
+         }
+         
+   var yyyy = d.getFullYear(); //yields year
+   d1 = yyyy + "-" + MM + "-" + dd;
+
+             
+                
+                
             var db;
-        document.addEventListener("deviceready", onDeviceReady, false);
+           document.addEventListener("deviceready", onDeviceReady, false);
 function onDeviceReady() {
  
-            alert('enteredDR');
-   window.plugins.sqlDB.copy("toastmasters.db",0,copysuccess,copyerror);
+          //  alert('enteredDR');
+   window.plugins.sqlDB.copy("toast.db",0,copysuccess,copyerror);
 }
                
     function copysuccess(){
-        alert('enteredCS');
-    db = window.sqlitePlugin.openDatabase({name: "toastmasters.db",location:'default'});
+       // alert('enteredCS');
+    db = window.sqlitePlugin.openDatabase({name: "toast.db",location:'default'});
         db.transaction(queryDB, errorCB);
 }
                
 function copyerror(e){
-    alert('errorCE : '+JSON.stringify(e));
-    db = window.sqlitePlugin.openDatabase({name: "toastmasters.db",location:'default'});
+   // alert('errorCE : '+JSON.stringify(e));
+    db = window.sqlitePlugin.openDatabase({name: "toast.db",location:'default'});
     db.transaction(queryDB, errorCB);
 
 }
@@ -38,24 +132,102 @@ function copyerror(e){
 
 function queryDB(tx){
     
+    $("#butts").click(function(){
+    
+       var meetNo;
+        var theme=$("#theme").val();
+      
+           // alert('theme : '+theme);
      db.transaction(function(tx) {
-         var value;
-        tx.executeSql('SELECT * FROM MEETING', [], function(tx, result) {
-            dataset = result.rows;
-            len=dataset.length;
-            if(len>0)
+         
+          tx.executeSql('SELECT * FROM MEETING', [], function(tx, result) {
+            var dataset = result.rows;
+            var len=dataset.length;
+         //   alert('length is'+len);
+             // alert('date:'+d1);
+          //    alert('date:'+d);
+           
+            if(len==0)
                 {
-                    value=dataset.item(len-1).MEETING_NO;
-                    value=value+1;
+                  
+                     meetNo=1;
+                    db.transaction(function(tx){
+                       
+            tx.executeSql('INSERT INTO MEETING(MEETING_NO,MEETING_DATE,MEETING_THEME) VALUES(?,?,?)',[meetNo,d1,theme],function(tx,result){
+                          //  alert('inserted');
+                db.transaction(function(tx){
+           
+        tx.executeSql('SELECT * FROM MEETING',[],function(tx,result){
+          // alert('selected');
+            var len2 = result.rows.length;
+           // alert('length is'+len2);
+            var theme2=result.rows.item(len2-1).MEETING_THEME;
+           // alert('theme is'+ theme2);
+        },
+        function(e){
+            alert('errorCE:'+JSON.stringify(e));
+        });
+        });  
+                        
+                        },
+                            function(e){
+                            alert('errorCE: '+JSON.stringify(e));
+                        });
+                    });
                 }
-            else{
-                
-                value=1;
-            }
-                
+            else
+                {
+                    
+                    if( dataset.item(len-1).FLAG==1)
+                        {
+                    meetNo=dataset.item(len-1).MEETING_NO;
+                    meetNo=meetNo+1;
+                    db.transaction(function(tx){
+        tx.executeSql('INSERT INTO MEETING(MEETING_NO,MEETING_DATE,MEETING_THEME) VALUES(?,?,?)', [meetNo,d1,theme], function(tx, result) {
+          //  alert('inserted1');
+            db.transaction(function(tx){
+           
+        tx.executeSql('SELECT * FROM MEETING',[],function(tx,result){
+        //   alert('selected');
+            var len2 = result.rows.length;
+        //    alert('length is'+len2);
+            var theme2=result.rows.item(len2-1).MEETING_THEME;
+         //   alert('theme is'+ theme2);
+            var mn=result.rows.item(len2-1).MEETING_NO;
+         //   alert('meeting no. : '+mn);
+        },
+        function(e){
+            alert('errorCE:'+JSON.stringify(e));
+        });
+        });  
+                },
+                      function(e){
+            alert('errorCE : '+JSON.stringify(e));
         });
     });
-
+                }
+                }
+        },
+                        function(e){
+                            alert('errorCE: '+JSON.stringify(e));
+                        });
+     });
+        
+   /* db.transaction(function(tx){
+           
+        tx.executeSql('SELECT * FROM MEETING',[],function(tx,result){
+           alert('selected')
+            var len2 = result.rows.length;
+            alert('length is'+len2);
+            var theme2=result.item(len2-1).MEETING_THEME;
+            alert('theme is'+ theme2);
+        },
+        function(e){
+            alert('errorCE:'+JSON.stringify(e));
+        });
+        }); */  
+ });
+    
     
 }
 function errorCB(err){
@@ -65,7 +237,7 @@ function errorCB(err){
                    
                        
   
-  })
+  });
             
         </script>
        <style>
@@ -334,12 +506,14 @@ img {
         <script>
         $('#image').width(500);
           $('#image').height(700);
+           
         </script>
         
 
       
     </head>
     <body>
+        <script type="text/javascript" src="cordova.js"></script>
     <div data-role="page" id="home">
     <div class="page">
         
@@ -351,22 +525,28 @@ img {
       <span class="icon-bar"></span>
     </div>
     <div id="nav-content" tabindex="0">
-  <ul>
+ <ul>
         <li><a href="index.html" rel="external">Home Page</a></li>
         <li><a href="3create_agenda.html" rel="external">Create Agenda</a></li>
-        <li><a href="#0">View/Modify Agenda</a></li>
+        <li><a href="modagenda.html" rel="external">View Agenda</a></li>
         <li><a href="4timer.html" rel="external">Start Timer</a></li>
-        <li><a href="6edit_table_topic.html" rel="external">Edit Table Topic</a></li>
-        <li><a href="#0">Report</a></li>
+       
+        <li><a href="12report.html" rel="external">Report</a></li>
         <li><a href="9gen_info.html" rel="external">General Information</a></li>
-        <li><a href="7add_new_toast.html" rel="external">Add Toastmaster</a></li>
-        <li><a href="8add_speech_type.html" rel="external">Add Speech Type</a></li>  
+        <li><a href="listtoast.html" rel="external">Add Toastmaster</a></li>
+        <li><a href="listspeech.html" rel="external">Add Speech Type</a></li>  
+        <li><a href="listtoastr.html" rel="external">Remove Toastmaster</a></li> 
+        <li><a href="listspeechr.html" rel="external">Remove Speech Type</a></li>
         </ul>
           
                
     </div>
   </div>
-<main>        
+<main> 
+    <form>
+ <input type="text" id="theme" placeholder="Enter Meeting Theme"/>
+        <button type="button" id="butts" class="btn btn-primary active">SUBMIT</button>
+    </form>
   <div id="image" style="text-align : center;">
     <img src="toastlogo.png" />
 </div>

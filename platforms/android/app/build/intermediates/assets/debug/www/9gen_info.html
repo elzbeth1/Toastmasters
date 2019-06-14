@@ -18,28 +18,25 @@
             var db;
         document.addEventListener("deviceready", onDeviceReady, false);
 function onDeviceReady() {
-    alert('dr');
-   window.plugins.sqlDB.copy("toastmasters.db",0,copysuccess,copyerror);
+   window.plugins.sqlDB.copy("toast.db",0,copysuccess,copyerror);
 }
                
     function copysuccess(){
-        alert('cs');
-    db = window.sqlitePlugin.openDatabase({name: "toastmasters.db",location:'default'});
+    db = window.sqlitePlugin.openDatabase({name: "toast.db",location:'default'});
         db.transaction(queryDB, errorCB);
 }
                
 function copyerror(e){
-    alert('errorCE : '+JSON.stringify(e));
-    db = window.sqlitePlugin.openDatabase({name: "toastmasters.db",location:'default'});
+   // alert('errorCE : '+JSON.stringify(e));
+    db = window.sqlitePlugin.openDatabase({name: "toast.db",location:'default'});
     db.transaction(queryDB, errorCB);
 
 }
  function queryDB(tx) {
-    alert('qd');
+
     db.transaction(function(tx) {
-        alert('select');
         tx.executeSql("SELECT * FROM GENERAL_INFORMATION", [], function(tx, result) {
-            alert('hey');
+         //   alert('hey');
             var resultDiv = $('#con');
             dataset = result.rows;
                 item = dataset.item(dataset.length-1);
@@ -49,32 +46,35 @@ function copyerror(e){
             data = "Locality : " + item.LOCALITY;
                 resultDiv.append(data + "<br>");
             
-            data = "Club_Number : " + item.CLUB_NUMBER;
+            data = "Club Number : " + item.CLUB_NUMBER;
                 resultDiv.append(data + "<br>");
             
-            data = "Club_Name : " + item.CLUB_NAME;
+            data = "Club Name : " + item.CLUB_NAME;
                 resultDiv.append(data + "<br>");
             
-            data = "Area_Name : " + item.AREA_NAME;
+            data = "Area Name : " + item.AREA_NAME;
                 resultDiv.append(data + "<br>");
             
-            data = "Division_Name : " + item.DIVISION_NAME;
+            data = "Division Name : " + item.DIVISION_NAME;
                 resultDiv.append(data + "<br>");
             
-            data = "District_Name : " + item.DISTRICT_NAME;
+            data = "District Name : " + item.DISTRICT_NAME;
                 resultDiv.append(data + "<br>");
             
-            data = "Meeting_Day : " + item.MEETING_DAY;
+            data = "Meeting Day : " + item.MEETING_DAY;
                 resultDiv.append(data + "<br>");
             
-            data = "Meeting_time : " + item.MEETING_TIME;
+            data = "Meeting time : " + item.MEETING_TIME;
                 resultDiv.append(data + "<br>");
             
             
-            data = "Contact_phone_no : " + item.CONTACT_PHONE_NO;
+            data = "Contact phone no : " + item.CONTACT_PHONE_NO;
                 resultDiv.append(data + "<br>");
             
-            data = "Table_topic_duration : " + item.TABLE_TOPIC_DURATION;
+            data = "Table topic duration : " + item.TABLE_TOPIC_DURATION;
+                resultDiv.append(data + "<br>");
+            
+            data = "Beep Interval : " + item.BEEP_INTERVAL;
                 resultDiv.append(data + "<br>");
             
             
@@ -338,13 +338,15 @@ img {
        <ul>
         <li><a href="index.html" rel="external">Home Page</a></li>
         <li><a href="3create_agenda.html" rel="external">Create Agenda</a></li>
-        <li><a href="#0">View/Modify Agenda</a></li>
+        <li><a href="modagenda.html" rel="external">View Agenda</a></li>
         <li><a href="4timer.html" rel="external">Start Timer</a></li>
-        <li><a href="6edit_table_topic.html" rel="external">Edit Table Topic</a></li>
-        <li><a href="#0">Report</a></li>
+       
+        <li><a href="12report.html" rel="external">Report</a></li>
         <li><a href="9gen_info.html" rel="external">General Information</a></li>
-        <li><a href="7add_new_toast.html" rel="external">Add Toastmaster</a></li>
-        <li><a href="8add_speech_type.html" rel="external">Add Speech Type</a></li>  
+        <li><a href="listtoast.html" rel="external">Add Toastmaster</a></li>
+        <li><a href="listspeech.html" rel="external">Add Speech Type</a></li>  
+        <li><a href="listtoastr.html" rel="external">Remove Toastmaster</a></li> 
+        <li><a href="listspeechr.html" rel="external">Remove Speech Type</a></li>
         </ul>
     </div>
   </div>

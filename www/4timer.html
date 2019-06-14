@@ -16,46 +16,103 @@
            
            $(document).ready(function(){
           /* alert('simply');*/ 
-                var db,time,tim,speech,name,min,max,warn,agenda,g,a,r,b,b1,buzz; /*buzz1,buzz2,b1,b2; */
+                var db,time1,tim,time,tim1,speech,name,min,max,warn,agenda,g,a,r,b,b1,buzz,mn,flag=1,t,buzzer=0,Q,dur; /*buzz1,buzz2,b1,b2; */
             /*   alert('entered doc'); */
         document.addEventListener("deviceready", onDeviceReady, false);
 function onDeviceReady() { 
     
-  /* var macAddress="20:18:07:13:58:62"; */
-    window.plugins.sqlDB.copy("toastmasters.db",0,copysuccess,copyerror);
+  var macAddress="20:18:07:13:58:62"; 
+    window.plugins.sqlDB.copy("toast.db",0,copysuccess,copyerror);
   /* alert('entered Dev Ready'); */
     
- /*bluetoothSerial.connectInsecure(macAddress,
+bluetoothSerial.connectInsecure(macAddress,
                          function(){
      alert('Bluetooth connected');
  },
-                        function(){
+                       /* function(){
      
      bluetoothSerial.connectInsecure(macAddress,
                          function(){
      alert('Bluetooth connected');
- },
+ },*/
                         function(){
     alert('not connected');
  });
- });*/ 
+ //}); 
           
 }
 
   function copysuccess(){
        /* alert('copySuccess'); */
-    db = window.sqlitePlugin.openDatabase({name: "toastmasters.db",location:'default'});
+    db = window.sqlitePlugin.openDatabase({name: "toast.db",location:'default'});
         db.transaction(queryDB, errorCB);
 }
                
 function copyerror(e){
     /*alert('errorCE : '+JSON.stringify(e));*/
-    db = window.sqlitePlugin.openDatabase({name: "toastmasters.db",location:'default'});
+    db = window.sqlitePlugin.openDatabase({name: "toast.db",location:'default'});
     db.transaction(queryDB, errorCB);
+}
+               var h1 = document.getElementsByTagName('h1')[0],
+    start = document.getElementById('btns'),
+    stop = document.getElementById('btnst'),
+    clear = document.getElementById('nxbtn'),
+    seconds = 0, minutes = 0, hours = 0,
+    t;
+
+function add() {
+    seconds++;
+    if (seconds >= 60) {
+        seconds = 0;
+        minutes++;
+        if (minutes >= 60) {
+            minutes = 0;
+            hours++;
+        }
+    }
+    
+    h1.textContent = (minutes ? (minutes > 9 ? minutes : "0" + minutes) : "00") + ":" + (seconds > 9 ? seconds : "0" + seconds);
+
+    timer();
+}
+function timer() {
+    t = setTimeout(add, 1000);
+}
+
+
+
+/* Start button */
+start.onclick = function(){
+    timer();
+}
+
+/* Stop button */
+stop.onclick = function() {
+    clearTimeout(t);
+}
+
+/* Clear button */
+clear.onclick = function() {
+    h1.textContent = "00:00";
+    seconds = 0; minutes = 0; hours = 0;
 }
 
     function queryDB(transaction){
     
+        db.transaction(function(tx){
+        tx.executeSql('SELECT * FROM MEETING', [], function(tx, result1) {
+            var dataset1 = result1.rows;
+            var len = result1.rows.length;
+            mn=result1.rows.item(len-1).MEETING_NO;
+         //  alert('mn : '+mn); 
+            
+               }, 
+   
+      function(error){alert('Something went Wrong');});
+                       
+                       
+                       
+              }); 
      db.transaction(function(transaction) {
         /* alert('entered DB'); */ 
     var executeQuery = "SELECT * FROM MEETING_AGENDA WHERE FLAG IS NULL";
@@ -66,9 +123,12 @@ function copyerror(e){
         /*alert(len);*/
         
                             agenda=result.rows.item(0).AGENDA_ITEM_NO;
+                          //  alert(agenda);
                             speech=result.rows.item(0).SPEECH_TYPE_DESCRIPTION;
+                           // alert(speech);
                             document.getElementById("speech").innerHTML=speech;
                             name= result.rows.item(0).TOASTMASTER_NAME;
+                           // alert(name);
                             document.getElementById("name").innerHTML=name;
                             
         }, 
@@ -85,9 +145,32 @@ function copyerror(e){
     transaction.executeSql(executeQuery, [speech],
       //On Success
       function(transaction, result) {
+        
                         min  = Number(result.rows.item(0).MINIMUM_TIME)*60*1000;
+                                var mim = Math.floor((Number(result.rows.item(0).MINIMUM_TIME)*60) % 3600 / 60);
+                                var mis = Math.floor((Number(result.rows.item(0).MINIMUM_TIME)*60) % 3600 % 60);
+                        var mini=('0' + mim).slice(-2) + ":" + ('0' + mis).slice(-2);
+                        $('span.a').text(mini);
+        
                         max  = Number(result.rows.item(0).MAXIMUM_TIME)*60*1000;
+                                var mam = Math.floor((Number(result.rows.item(0).MAXIMUM_TIME)*60) % 3600 / 60);
+                                var mas = Math.floor((Number(result.rows.item(0).MAXIMUM_TIME)*60) % 3600 % 60);
+                        var maxi=('0' + mam).slice(-2) + ":" + ('0' + mas).slice(-2);
+                        $('span.c').text(maxi);
+        
                         warn = Number(result.rows.item(0).WARNING_TIME)*60*1000;
+                                var warm = Math.floor((Number(result.rows.item(0).WARNING_TIME)*60) % 3600 / 60);
+                                var wars = Math.floor((Number(result.rows.item(0).WARNING_TIME)*60) % 3600 % 60);
+                        var wari=('0' + warm).slice(-2) + ":" + ('0' + wars).slice(-2);
+                        $('span.b').text(wari);
+        
+                        //span.a.innerHTML=Number(result.rows.item(0).MINIMUM_TIME)*60;
+                      //  max  = Number(result.rows.item(0).MAXIMUM_TIME)*60*1000;
+                      //  $('span.c').text(max/1000);
+                      //  span.b.innerHTML=Number(result.rows.item(0).MAXIMUM_TIME)*60;
+                      //  warn = Number(result.rows.item(0).WARNING_TIME)*60*1000;
+                      //  $('span.b').text(warn/1000);
+                       // span.c.innerHTML=Number(result.rows.item(0).WARNING_TIME)*60;
                         buzz = max+ 30000; 
        /* alert('enterd speech'); */ 
                        /* buzz1=buzz+30000;
@@ -97,7 +180,6 @@ function copyerror(e){
       //On Error
       function(error){alert('Something went Wrong');});
   });
-         
 
   
     
@@ -111,41 +193,62 @@ function copyerror(e){
     var executeQuery = "UPDATE MEETING_AGENDA SET ACTUAL_START_TIME =? WHERE AGENDA_ITEM_NO =?";
     transaction.executeSql(executeQuery, [time,agenda],
       //On Success
-      function(transaction, result) {alert('Actual Start TIme Updated successfully');
+      function(transaction, result) {/*alert('Actual Start TIme Updated successfully');*/
                            
                            
                            }, 
       //On Error
       function(error){alert('Something went Wrong');});
   });
+         
+        
          g=setTimeout(function(){
-                  /* bluetoothSerial.write("G",function(){alert('green');},function(){alert('not green');}); */ 
+                  bluetoothSerial.write("G",function(){/*alert('green');*/},function(){alert('not green');}); 
          $("span.a").css({opacity:'1'}); 
            /*  alert('green'); */
                     
 }, min); 
          a=setTimeout(function(){ 
          
-     /*bluetoothSerial.write("Y", function(){alert('amber');},function(){alert('amber not');}); */
+   bluetoothSerial.write("Y", function(){/*alert('amber');*/},function(){/*alert('amber not');*/}); 
                     $("span.a").css({opacity:'0.2'});
                     $("span.b").css({opacity:'1'});
              /*alert('amber');*/
                     }, warn);
          r=setTimeout(function(){ 
          
-                /*  bluetoothSerial.write("R",function(){alert('red'); },function(){alert('red not');}); */
+                 bluetoothSerial.write("R",function(){/*alert('red');*/ },function(){/*alert('red not');*/}); 
              $("span.b").css({opacity:'0.2'});
       $("span.c").css({opacity:'1'});   
      /*alert('red');*/
      }, max);
      
          b = setTimeout(function() {
-  $("span.c").css({opacity:'0.2'});   
+             bluetoothSerial.write("R",function(){/*alert('red');*/ },function(){alert('red not');}); 
+  $("span.c").css({opacity:'1'});   
   alert('buzz1');
+             bluetoothSerial.write("B",
+                                          function(){
+                        
+                    },
+                                          function(){
+                        alert('green not');
+                    });
+             buzzer=buzzer+1;
   b1 = setInterval(function(){
+      bluetoothSerial.write("B",
+                                          function(){
+                        
+                    },
+                                          function(){
+                        alert('green not');
+                    });
       alert('buzz1');
+      buzzer=buzzer+1;
   }, 30000); 
 }, buzz); 
+        
+        
         
          
            /* bluetoothSerial.write("B",function(){},function(){alert('buz  not');});
@@ -175,36 +278,87 @@ function copyerror(e){
      });
          $("#btnst").click(function(){
         /*alert('stopped');*/
-         /*bluetoothSerial.write("O",
+         bluetoothSerial.write("O",
                                           function(){
-                        alert('OFF');
+                        //alert('OFF');
                     },
                                           function(){
-                        alert('not OFF');
-                    }*/ 
-   flag=1;
+                       // alert('not OFF');
+                    });
+
         clearTimeout(g);
         clearTimeout(a);
         clearTimeout(r);
-        clearTimeout(b1);
+        clearTimeout(b);
+        clearInterval(b1);
+       
     /*    clearTimeout(b1);
         clearTimeout(b2); */
         tim1= new Date($.now());
         time1=tim1.getHours()+':' +tim1.getMinutes() +':' +tim1.getSeconds();
-        alert(time1);
-        var Q=1;
-        db.transaction(function(transaction){
-            var executeQuery="UPDATE MEETING_AGENDA SET ACTUAL_END_TIME=?,FLAG=? WHERE AGENDA_ITEM_NO=?";
-            transaction.executeSql(executeQuery,[time1,Q,agenda],
-                function(tx,result){alert('updated');
+       // alert(time1);
+        Q=1;
+              dur=(Number(tim1.getHours())-Number(tim.getHours())) +':'+(Number(tim1.getMinutes())-Number(tim.getMinutes()))+':'+(Number(tim1.getSeconds())-Number(tim.getSeconds()));
+        //alert('duration of the speech is:'+dur); 
+             
+       // alert(time1);
+       // alert(Q);
+       // alert(buzzer);
+       // alert(dur); 
+       // alert(agenda);
+        
+        
+        db.transaction(function(tx){
+            var executeQuery="UPDATE MEETING_AGENDA SET ACTUAL_END_TIME=?,FLAG=?,BUZZER=?,TOT_TIME=? WHERE AGENDA_ITEM_NO=?";
+            tx.executeSql(executeQuery,[time1,Q,buzzer,dur,agenda],
+                function(tx,result){/*alert('updated');*/
                                    },
                 function(error){
                 alert('Something went Wrong');
             });
         });
-        var dur=(Number(tim1.getHours())-Number(tim.getHours())) +':'+(Number(tim1.getMinutes())-Number(tim.getMinutes()))+':'+(Number(tim1.getSeconds())-Number(tim.getSeconds()));
-        alert('duration of the speech is:'+dur); 
-              });
+        });
+        $("#adj").click(function(){
+        //    alert('adj');
+            
+              
+        db.transaction(function(tx){
+          /*  alert('mn : '+mn);     
+            alert('flag : '+flag);*/
+            var executeQuery1="UPDATE MEETING SET FLAG=? WHERE MEETING_NO=?";
+            tx.executeSql(executeQuery1,[flag,mn],
+            function(tx,result){/*alert('updated');*/
+                                   },
+            function(error){
+                alert('Something went Wrong');
+            });
+        });           
+         
+         /*   db.transaction(function(tx){
+                var flag=1;
+            alert('flag : '+flag); 
+            var executeQuery="UPDATE MEETING SET FLAG=? WHERE MEETING_NO=?";
+            tx.executeSql(executeQuery,[flag,mn],
+            function(tx,result){alert('updated');
+                                   },
+            function(error){
+                alert('Something went Wrong');
+            });
+        });*/
+            
+         /* db.transaction(function(tx){
+              alert('flag : '+flag);
+    var executeQuery = "'UPDATE MEETING SET FLAG=? WHERE MEETING_NO=?'";
+    tx.executeSql(executeQuery, [flag,mn],
+      //On Success
+      function(tx, result) {alert('Updated successfully');},
+      //On Error
+      function(error){alert('Something went Wrong');});
+  });   */
+            
+       
+            
+        });
     }
                
     function errorCB(err) {
@@ -453,6 +607,8 @@ img {
                 background-color:limegreen;
                 opacity :0.2;
                 align-items: center;
+                text-align:center;
+                font-size: 20px;
             }
 
             span.b {
@@ -464,6 +620,8 @@ img {
                 background-color: yellow;
                 opacity:0.2;
                 align-items: center;
+                text-align:center;
+                font-size: 20px;
             }
             span.c {
                 display: inline-block;
@@ -473,8 +631,9 @@ img {
                 border: 1px solid red;     
                 background-color: red;
                 opacity:0.2;
-                 
+                text-align:center;
                 align-items: center;
+                font-size: 20px;
             }           
             #a1 {
                     margin 400px, 0px, 0px, 0px;
@@ -484,6 +643,9 @@ img {
         /*    #b1 {
                     float: right;
                 } */
+            #timer{
+                text-align: center;
+            }
             
         </style>
 
@@ -505,13 +667,15 @@ img {
        <ul>
         <li><a href="index.html" rel="external">Home Page</a></li>
         <li><a href="3create_agenda.html" rel="external">Create Agenda</a></li>
-        <li><a href="#0">View/Modify Agenda</a></li>
+        <li><a href="modagenda.html" rel="external">View Agenda</a></li>
         <li><a href="4timer.html" rel="external">Start Timer</a></li>
-        <li><a href="6edit_table_topic.html" rel="external">Edit Table Topic</a></li>
-        <li><a href="#0">Report</a></li>
+       
+        <li><a href="12report.html" rel="external">Report</a></li>
         <li><a href="9gen_info.html" rel="external">General Information</a></li>
-        <li><a href="7add_new_toast.html" rel="external">Add Toastmaster</a></li>
-        <li><a href="8add_speech_type.html" rel="external">Add Speech Type</a></li>  
+        <li><a href="listtoast.html" rel="external">Add Toastmaster</a></li>
+        <li><a href="listspeech.html" rel="external">Add Speech Type</a></li>  
+        <li><a href="listtoastr.html" rel="external">Remove Toastmaster</a></li> 
+        <li><a href="listspeechr.html" rel="external">Remove Speech Type</a></li>
         </ul>
     </div>
   </div>
@@ -528,7 +692,7 @@ img {
                 }
                 else if(n==1)
                     {
-                        d.setDate(d.etDate()+3);
+                        d.setDate(d.getDate()+3);
                     }
                 else if(n==2)
                     {
@@ -544,7 +708,7 @@ img {
                     }
                 else if(n==6)
                     {
-                        d.setDate(d.getDate()+5)
+                        d.setDate(d.getDate()+5);
                     }
                     document.getElementById("a1").innerHTML = d.toDateString();
             </script>
@@ -572,11 +736,15 @@ img {
                <span data-inline="true" class="c"></span>
                    
          </div>
+      <div>
+          <h1 id="timer">00:00</h1>
+      
+      </div>
                 
                 <div class="form-row">
                     <a href="4timer.html" rel="external" data-role="button" data-inline="true" id="nxbtn">Next</a>
                     <a href="4timer.html" rel="external" data-role="button" data-inline="true">Absent</a>
-                    <a href="index.html" rel="external" data-role="button" data-inline="true">Adjourned</a>
+                    <a href="12report.html" rel="external" data-role="button" data-inline="true" id="adj">Adjourned</a>
                 </div>
        
            </main>

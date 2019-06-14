@@ -19,19 +19,18 @@
         document.addEventListener("deviceready", onDeviceReady, false);
 function onDeviceReady() {
  
-            alert('enteredDR');
-   window.plugins.sqlDB.copy("toastmasters.db",0,copysuccess,copyerror);
+   window.plugins.sqlDB.copy("toast.db",0,copysuccess,copyerror);
 }
                
     function copysuccess(){
-        alert('enteredCS');
-    db = window.sqlitePlugin.openDatabase({name: "toastmasters.db",location:'default'});
+
+    db = window.sqlitePlugin.openDatabase({name: "toast.db",location:'default'});
         db.transaction(queryDB, errorCB);
 }
                
 function copyerror(e){
-    alert('errorCE : '+JSON.stringify(e));
-    db = window.sqlitePlugin.openDatabase({name: "toastmasters.db",location:'default'});
+  //  alert('errorCE : '+JSON.stringify(e));
+    db = window.sqlitePlugin.openDatabase({name: "toast.db",location:'default'});
     db.transaction(queryDB, errorCB);
 
 }
@@ -39,19 +38,8 @@ function copyerror(e){
 
 function queryDB(tx) {
     
-    
-<!--Method to insert new row in the database-->
-$("#btn").click(function(){
-    
-     db.transaction(function(transaction) {
-    transaction.executeSql('CREATE TABLE IF NOT EXISTS TOASTMASTER(TOASTMASTER_ID VARCHAR(10) PRIMARY KEY NOT NULL,TOASTMASTER_NAME VARCHAR(50) NOT NULL,DOB DATE NOT NULL,CONTACT_PHONE_NO VARCHAR(15) NOT NULL,EMAIL_ID VARCHAR(50) NOT NULL)', [],
-        function(tx, result) {
-            alert("Table created successfully");
-        }, 
-        function(error) {
-              alert("Error occurred while creating the table.");
-        });
-    });
+    $("#btn").click(function(){
+
     
     /* db.transaction(function(transaction) {
          alert('select');
@@ -72,7 +60,7 @@ var len = result.rows.length, i;
 
 }, null);
 });*/
-var id=1;  
+var id=  $("#tid").val();
 var name = $("#name").val();
 var date=$("#date").val();
 var num =$("#num").val();
@@ -89,16 +77,8 @@ function(error){
 alert(error);
 });
 });
-    db.transaction(function(transaction) {
-transaction.executeSql('SELECT * FROM TOASTMASTER', [], function (tx, result) {
-var len = result.rows.length, i;
-for (i = 0; i < len; i++){
-    alert('Hello : '+result.rows.item(i).TOASTMASTER_NAME)
-
-}
-}, null);
-});
-});
+    
+    });
 }
   function errorCB(err) {
   alert("Error processing SQL : "+err.message);
@@ -305,21 +285,27 @@ img {
       <span class="icon-bar"></span>
     </div>
     <div id="nav-content" tabindex="0">
-       <ul>
+      <ul>
         <li><a href="index.html" rel="external">Home Page</a></li>
         <li><a href="3create_agenda.html" rel="external">Create Agenda</a></li>
-        <li><a href="#0">View/Modify Agenda</a></li>
+        <li><a href="modagenda.html" rel="external">View Agenda</a></li>
         <li><a href="4timer.html" rel="external">Start Timer</a></li>
-        <li><a href="6edit_table_topic.html" rel="external">Edit Table Topic</a></li>
-        <li><a href="#0">Report</a></li>
+       
+        <li><a href="12report.html" rel="external">Report</a></li>
         <li><a href="9gen_info.html" rel="external">General Information</a></li>
-        <li><a href="7add_new_toast.html" rel="external">Add Toastmaster</a></li>
-        <li><a href="8add_speech_type.html" rel="external">Add Speech Type</a></li>  
+        <li><a href="listtoast.html" rel="external">Add Toastmaster</a></li>
+        <li><a href="listspeech.html" rel="external">Add Speech Type</a></li>  
+        <li><a href="listtoastr.html" rel="external">Remove Toastmaster</a></li> 
+        <li><a href="listspeechr.html" rel="external">Remove Speech Type</a></li>
         </ul>
         </div>
             </div>  
       <main>
       <form method="post">
+          <div class="form-group">
+          <label for="name">Enter Toastmaster ID</label>
+  <input type="text" class="form-control" id="tid" required/>
+</div>
       <div class="form-group">
           <label for="name">Enter Toastmaster Name</label>
   <input type="text" class="form-control" id="name" required/>
@@ -336,7 +322,7 @@ img {
           <label for="num">Enter the Contact Number</label>
   <input type="number" class="form-control" id="num" required/>
 </div>
-    <button type="submit" class="btn btn-primary  active" id="btn">ADD</button>
+    <button type="submit" class="btn btn-primary  active" id="btn" onclick='location.href="listtoast.html"'>ADD</button>
           </form>
           </main>
         </div>

@@ -22,18 +22,18 @@
 function onDeviceReady() {
  
             
-   window.plugins.sqlDB.copy("toastmasters.db",0,copysuccess,copyerror);
+   window.plugins.sqlDB.copy("toast.db",0,copysuccess,copyerror);
 }
                
     function copysuccess(){
         
-    db = window.sqlitePlugin.openDatabase({name: "toastmasters.db",location:'default'});
+    db = window.sqlitePlugin.openDatabase({name: "toast.db",location:'default'});
         db.transaction(queryDB, errorCB);
 }
                
 function copyerror(e){
-    alert('errorCE : '+JSON.stringify(e));
-    db = window.sqlitePlugin.openDatabase({name: "toastmasters.db",location:'default'});
+   // alert('errorCE : '+JSON.stringify(e));
+    db = window.sqlitePlugin.openDatabase({name: "toast.db",location:'default'});
     db.transaction(queryDB, errorCB);
 }
 function queryDB(tx) {
@@ -43,7 +43,6 @@ function queryDB(tx) {
 $("#btn").click(function(){
   
 var cty = $("#coun").val();
-    alert(cty);
 var loc=$("#loc").val();
 var cnum =$("#cnum").val();
 var cname =$("#cname").val();
@@ -52,13 +51,12 @@ var div =$("#div").val();
 var dis =$("#dis").val();
 var mday =$("#meet option:selected").text();
 var mtime =$("#mtime").val();
-    alert(mtime);
-var cn = $("#cnum").val();
+var cn = $("#cn").val();
 var tt = $("#dur").val();
-    
+    var bp = $("#bp").val();
 db.transaction(function(transaction) {
-var executeQuery = "INSERT INTO GENERAL_INFORMATION(COUNTRY,LOCALITY,CLUB_NUMBER,CLUB_NAME,AREA_NAME,DIVISION_NAME,DISTRICT_NAME,MEETING_DAY,MEETING_TIME,CONTACT_PHONE_NO,TABLE_TOPIC_DURATION) VALUES (?,?,?,?,?,?,?,?,?,?,?)";
-transaction.executeSql(executeQuery, [cty,loc,cnum,cname,area,div,dis,mday,mtime,cn,tt]
+var executeQuery = "INSERT INTO GENERAL_INFORMATION(COUNTRY,LOCALITY,CLUB_NUMBER,CLUB_NAME,AREA_NAME,DIVISION_NAME,DISTRICT_NAME,MEETING_DAY,MEETING_TIME,CONTACT_PHONE_NO,TABLE_TOPIC_DURATION,BEEP_INTERVAL) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)";
+transaction.executeSql(executeQuery, [cty,loc,cnum,cname,area,div,dis,mday,mtime,cn,tt,bp]
 , function(tx, result) {
 alert('Inserted');
 },
@@ -279,17 +277,19 @@ img {
       <span class="icon-bar"></span>
     </div>
     <div id="nav-content" tabindex="0">
-      <ul>
+     <ul>
         <li><a href="index.html" rel="external">Home Page</a></li>
         <li><a href="3create_agenda.html" rel="external">Create Agenda</a></li>
-        <li><a href="#0">View/Modify Agenda</a></li>
+        <li><a href="modagenda.html" rel="external">View Agenda</a></li>
         <li><a href="4timer.html" rel="external">Start Timer</a></li>
-        <li><a href="6edit_table_topic.html" rel="external">Edit Table Topic</a></li>
-        <li><a href="#0">Report</a></li>
+       
+        <li><a href="12report.html" rel="external">Report</a></li>
         <li><a href="9gen_info.html" rel="external">General Information</a></li>
-        <li><a href="7add_new_toast.html" rel="external">Add Toastmaster</a></li>
-        <li><a href="8add_speech_type.html" rel="external">Add Speech Type</a></li> 
-      </ul>
+        <li><a href="listtoast.html" rel="external">Add Toastmaster</a></li>
+        <li><a href="listspeech.html" rel="external">Add Speech Type</a></li>  
+        <li><a href="listtoastr.html" rel="external">Remove Toastmaster</a></li> 
+        <li><a href="listspeechr.html" rel="external">Remove Speech Type</a></li>
+        </ul>
     </div>
   </div>
   <main>
@@ -332,11 +332,16 @@ img {
         <input type="time" name="name" value="" id="mtime" >
        
         Contact Number:
-        <input type="number" name="contact number" id="cnum" placeholder="Enter the contact number ">
+        <input type="number" name="contact number" id="cn" placeholder="Enter the contact number ">
         <div class="form-row col-xs-6" > 
             
         Table Topic Duration(min)
-        <input type="text" id="dur"/> 
+        <input type="number" id="dur"/> 
+            </div>
+            <div class="form-row col-xs-6" > 
+            
+            Beep Interval(sec)
+        <input type="number" id="bp"/> 
             </div>
             
         <div class="form-row col-xs-12">

@@ -19,19 +19,18 @@
         document.addEventListener("deviceready", onDeviceReady, false);
 function onDeviceReady() {
  
-            alert('enteredDR');
-   window.plugins.sqlDB.copy("toastmasters.db",0,copysuccess,copyerror);
+   window.plugins.sqlDB.copy("toast.db",0,copysuccess,copyerror);
 }
                
     function copysuccess(){
-        alert('enteredCS');
-    db = window.sqlitePlugin.openDatabase({name: "toastmasters.db",location:'default'});
+        
+    db = window.sqlitePlugin.openDatabase({name: "toast.db",location:'default'});
         db.transaction(queryDB, errorCB);
 }
                
 function copyerror(e){
-    alert('errorCE : '+JSON.stringify(e));
-    db = window.sqlitePlugin.openDatabase({name: "toastmasters.db",location:'default'});
+ //   alert('errorCE : '+JSON.stringify(e));
+    db = window.sqlitePlugin.openDatabase({name: "toast.db",location:'default'});
     db.transaction(queryDB, errorCB);
 
 }
@@ -92,14 +91,14 @@ var len = result.rows.length;
 
 });
 });*/
-    var id=1;
+
 var des = $("#des").val();
 var green=$("#green").val();
 var amber =$("#amber").val();
 var red = $("#red").val();
 db.transaction(function(transaction) {
-var executeQuery = "INSERT INTO SPEECH_TYPE (SPEECH_TYPE_ID,SPEECH_TYPE_DESCRIPTION,MINIMUM_TIME,MAXIMUM_TIME,WARNING_TIME) VALUES (?,?,?,?,?)";
-transaction.executeSql(executeQuery, [id,des,green,amber,red]
+var executeQuery = "INSERT INTO SPEECH_TYPE (SPEECH_TYPE_DESCRIPTION,MINIMUM_TIME,MAXIMUM_TIME,WARNING_TIME) VALUES (?,?,?,?)";
+transaction.executeSql(executeQuery, [des,green,amber,red]
 , function(tx, result) {
 alert('Inserted');
 
@@ -306,13 +305,15 @@ ul {
       <ul>
         <li><a href="index.html" rel="external">Home Page</a></li>
         <li><a href="3create_agenda.html" rel="external">Create Agenda</a></li>
-        <li><a href="#0">View/Modify Agenda</a></li>
+        <li><a href="modagenda.html" rel="external">View Agenda</a></li>
         <li><a href="4timer.html" rel="external">Start Timer</a></li>
-        <li><a href="6edit_table_topic.html" rel="external">Edit Table Topic</a></li>
-        <li><a href="#0">Report</a></li>
+       
+        <li><a href="12report.html" rel="external">Report</a></li>
         <li><a href="9gen_info.html" rel="external">General Information</a></li>
-        <li><a href="7add_new_toast.html" rel="external">Add Toastmaster</a></li>
-        <li><a href="8add_speech_type.html" rel="external">Add Speech Type</a></li>  
+        <li><a href="listtoast.html" rel="external">Add Toastmaster</a></li>
+        <li><a href="listspeech.html" rel="external">Add Speech Type</a></li>  
+        <li><a href="listtoastr.html" rel="external">Remove Toastmaster</a></li> 
+        <li><a href="listspeechr.html" rel="external">Remove Speech Type</a></li>
         </ul>
     </div>
   </div>
@@ -335,7 +336,7 @@ ul {
         <label for="red">Time to turn on red</label>
         <input type="number"  step="any" class="form-control" id="red" />
         </div>
-<button type="submit" size="small" class="btn btn-primary active" id="add">ADD</button>
+<button type="submit" size="small" class="btn btn-primary active" id="add"  onclick='location.href="listspeech.html"'>ADD</button>
   
     
         </form>

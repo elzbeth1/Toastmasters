@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html>
+    
+    <head>
+            <meta charset="utf-8">
+        <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no, width=device-width">
+        <title>Add Speech Type</title>
+        <link rel="stylesheet" type="text/css" href="css/jquery.mobile-1.4.5.min.css" />
+        <script src="js/jquery-1.11.1.min.js"></script>
+        <script src="js/jquery.mobile-1.4.5.min.js"></script>
+        <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
+        <script src="js/jquery.min.js"></script>
+        <script src="js/bootstrap.min.js"></script>
+       <!-- <link rel="stylesheet/less" type="text/css" href="styles.less" />
+        <script src="less.min.js" ></script> -->
+        <script>
+            
+             $(document).ready(function(){
+            var db;
+var item;var item1;var item2;
+            var d;var an;
+        document.addEventListener("deviceready", onDeviceReady, false);
+function onDeviceReady() {
+ 
+           
+   window.plugins.sqlDB.copy("toast.db",0,copysuccess,copyerror);
+}
+               
+    function copysuccess(){
+        
+    db = window.sqlitePlugin.openDatabase({name: "toast.db",location:'default'});
+        db.transaction(queryDB, errorCB);
+}
+               
+function copyerror(e){
+   // alert('errorCE : '+JSON.stringify(e));
+    db = window.sqlitePlugin.openDatabase({name: "toast.db",location:'default'});
+    db.transaction(queryDB, errorCB);
+
+}
+    function queryDB(tx) {
+
+$("#su").click(function(){
+
+    var radioValue = $("input[name='tr']:checked").val();
+  
+    if(radioValue=="on")
+    {         var tdate = new Date();
+   var dd = tdate.getDate(); //yields day
+   var MM = tdate.getMonth(); //yields month
+     if(MM==0)
+         {
+             MM='01';
+         }
+    else if(MM==1)
+         {
+             MM='02';
+         }
+   else if(MM==2)
+         {
+             MM='03';
+         }
+    else if(MM==3)
+         {
+             MM='04';
+         }
+    else if(MM==4)
+         {
+             MM='05';
+         }
+   else if(MM==5)
+         {
+             MM='06';
+         }
+   else if(MM==6)
+         {
+             MM='07';
+         }
+   else if(MM==7)
+         {
+             MM='08';
+         }
+   else if(MM==8)
+         {
+             MM='09';
+         }
+     else if(MM==9)
+         {
+             MM='10'
+             
+         }
+     else if(MM==10)
+         {
+             MM='11'
+             
+         }
+     else if(MM==11)
+         {
+             MM='12'
+             
+         }
+         
+   var yyyy = tdate.getFullYear(); //yields year
+   d = yyyy + "-" + MM + "-" + dd;
+//alert(d);
+                
+            }
+
+    else{
+        
+    d = document.getElementById('dch').value;
+     //  alert('date: '+d); 
+    }
+    
+ db.transaction(function(tx) {
+        tx.executeSql('SELECT * FROM MEETING WHERE MEETING_DATE=?',[d], function(tx, result) {
+            var dataset = result.rows;
+            var ln=dataset.length;
+            if(ln==0)
+                {
+                    var resultDiv= $('#con');
+                    data = "Sorry! No meeting held on this date ";
+                resultDiv.append(data + "<br>");
+                    
+                }
+            item = dataset.item(0).MEETING_NO;
+   
+            }
+        , 
+      function(error){
+            alert('Something went Wrong');
+        }) ;
+              });
+    
+    db.transaction(function(tx) {
+        tx.executeSql('SELECT * FROM MEETING_AGENDA WHERE MEETING_NO=?',[item], function(tx, result) {
+            var resultDiv=$('#con');
+            var dataset = result.rows;
+            var len=dataset.length;
+            for(var i=0;i<len;i++)
+                {
+                item1=dataset.item(i);
+        if((dataset.item(i).SPEECH_TYPE_DESCRIPTION)=='Prepared Speech')
+                        {
+                             an=dataset.item(i).AGENDA_ITEM_NO;
+                            
+    tx.executeSql('SELECT * FROM PREPARED_SPEECH WHERE MEETING_NO=? AND AGENDA_ITEM_NO=?',[item,an], function(tx, result) {
+            var dataset1 = result.rows;
+            var l=dataset1.length;
+           item2 = dataset1.item(0);
+                    data = "<b>Agenda No:</b> " + item1.AGENDA_ITEM_NO;
+                resultDiv.append(data + "<br>");
+            
+            data = "Speech type: " + item1.SPEECH_TYPE_DESCRIPTION;
+                resultDiv.append(data + "<br>");
+            
+         data = "Speaker: " + item1.TOASTMASTER_NAME;
+                resultDiv.append(data + "<br>");
+        
+            data = "Manual: " + item2.MANUAL;
+                resultDiv.append(data + "<br>");
+            
+            data = "Project : " + item2.PROJECT;
+                resultDiv.append(data + "<br>");
+                    
+                     data = "Time alloted  : " + item1.TIME_DURATON_MAX;
+                resultDiv.append(data + "<br>");
+                    
+                     data = "Time taken  : " + item1.TOT_TIME;
+                resultDiv.append(data + "<br>");
+                    
+             data = "Start Time  : " + item1.ACTUAL_START_TIME;
+                resultDiv.append(data + "<br>");
+                    
+                    data = "End Time  : " + item1.ACTUAL_END_TIME;
+                resultDiv.append(data + "<br>");
+                      
+                    
+                    data = "Buzzer activated  : " + item1.BUZZER;
+                resultDiv.append(data + "<br>");
+                    
+                resultDiv.append("<br>");
+                    resultDiv.append("----------------------------------------------------------------------------------------<br><br>");
+            }
+        , 
+      function(error){
+            alert('Something went Wrong');
+        }) ;
+                             
+                        }
+              else{
+                  
+                   data = "<b>Agenda No:</b> " + item1.AGENDA_ITEM_NO;
+                resultDiv.append(data + "<br>");
+            
+            data = "Speech type: " + item1.SPEECH_TYPE_DESCRIPTION;
+                resultDiv.append(data + "<br>");
+                    
+                  data = "Speaker: " + item1.TOASTMASTER_NAME;
+                resultDiv.append(data + "<br>");
+                  
+                     data = "Time alloted  : " + item1.TIME_DURATON_MAX;
+                resultDiv.append(data + "<br>");
+                    
+                     data = "Time taken  : " + item1.TOT_TIME;
+                resultDiv.append(data + "<br>");
+                    
+             data = "Start Time  : " + item1.ACTUAL_START_TIME;
+                resultDiv.append(data + "<br>");
+                    
+                    data = "End Time  : " + item1.ACTUAL_END_TIME;
+                resultDiv.append(data + "<br>");
+                      
+                    
+                    data = "Buzzer activated  : " + item1.BUZZER;
+                resultDiv.append(data + "<br>");
+                    
+                resultDiv.append("<br>");
+                    resultDiv.append("----------------------------------------------------------------------------------------<br><br>");
+                  
+                  
+                  
+              }     
+            }
+        }
+        , 
+      function(error){
+            alert('Something went Wrong');
+        }
+                     ) ;
+              });
+                        });
+    }
+        
+               function errorCB(err) {
+  alert("Error processing SQL : "+err.message);
+}
+          });
+             </script>
+       <style>
+        @import url('https://fonts.googleapis.com/css?family=Encode+Sans+Condensed:400,600');
+* {
+  outline: none;
+}
+
+
+header {
+  display: flex;
+  position: fixed;
+  width: 100%;
+  height: 70px;
+  background: #000;
+  color: #fff;
+  justify-content: center;
+  align-items: center;
+  -webkit-tap-highlight-color: rgba(0,0,0,0);
+}
+
+           main{
+               padding:80px 10px;
+               height:100%;
+               background: #e6e6e6;
+               display: flex;
+  flex-direction: column;
+           }
+
+
+#nav-container {
+  position: fixed;
+  height: 100vh;
+  width: 100%;
+  pointer-events: none;
+    z-index: 1;
+}
+#nav-container .bg {
+  position: absolute;
+  top: 70px;
+  left: 0;
+  width: 100%;
+  height: calc(100% - 70px);
+  visibility: hidden;
+  opacity: 0;
+  transition: .3s;
+  background: #000;
+}
+#nav-container:focus-within .bg {
+  visibility: visible;
+  opacity: .6;
+}
+#nav-container * {
+  visibility: visible;
+}
+
+.button {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  z-index: 1;
+  -webkit-appearance: none;
+  border: 0;
+  background: transparent;
+  border-radius: 0;
+  height: 70px;
+  width: 30px;
+  cursor: pointer;
+  pointer-events: auto;
+  margin-left: 25px;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: rgba(0,0,0,0);
+}
+.icon-bar {
+  display: block;
+  width: 100%;
+  height: 3px;
+  background: #fff;
+  transition: .3s;
+}
+.icon-bar + .icon-bar {
+  margin-top: 5px;
+}
+
+#nav-container:focus-within .button {
+  pointer-events: none;
+}
+#nav-container:focus-within .icon-bar:nth-of-type(1) {
+  transform: translate3d(0,8px,0) rotate(45deg);
+}
+#nav-container:focus-within .icon-bar:nth-of-type(2) {
+  opacity: 0;
+}
+#nav-container:focus-within .icon-bar:nth-of-type(3) {
+  transform: translate3d(0,-8px,0) rotate(-45deg);
+}
+
+#nav-content {
+  
+  padding: 20px;
+  width: 90%;
+  max-width: 200px;
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  background: #000;
+  pointer-events: auto;
+  -webkit-tap-highlight-color: rgba(0,0,0,0);
+  transform: translateX(-100%);
+  transition: transform .3s;
+  will-change: transform;
+  contain: paint;
+   z-index: 1; position:relative; 
+}
+
+#nav-content ul {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+#nav-content li a {
+  padding: 10px 5px;
+  display: block;
+  text-transform: uppercase;
+  transition: color .1s;
+}
+
+#nav-content li a:hover {
+  color: #BF7497;
+}
+
+#nav-content li:not(.small) + .small {
+  margin-top: auto;
+}
+
+
+#nav-container:focus-within #nav-content {
+  transform: none;
+}
+html, body{
+  height: 100%;
+}
+
+a,
+a:visited,
+a:focus,
+a:active,
+a:link {
+  text-decoration: none;
+  outline: 0;
+}
+
+a {
+  color: currentColor;
+  transition: .2s ease-in-out;
+}
+
+
+
+ul {
+  padding: 0;
+  list-style: none;
+}
+ 
+        </style>
+    </head>
+    <body>
+             <script type="text/javascript" src="cordova.js"></script>
+
+        <div data-role="page" id="page1">
+  <header tabindex="0">REPORT</header>
+  <div id="nav-container">
+    <div class="button" tabindex="0">
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+    </div>
+    <div id="nav-content" tabindex="0">
+      <ul>
+        <li><a href="index.html" rel="external">Home Page</a></li>
+        <li><a href="3create_agenda.html" rel="external">Create Agenda</a></li>
+        <li><a href="modagenda.html" rel="external">View Agenda</a></li>
+        <li><a href="4timer.html" rel="external">Start Timer</a></li>
+       
+        <li><a href="12report.html" rel="external">Report</a></li>
+        <li><a href="9gen_info.html" rel="external">General Information</a></li>
+        <li><a href="listtoast.html" rel="external">Add Toastmaster</a></li>
+        <li><a href="listspeech.html" rel="external">Add Speech Type</a></li>  
+        <li><a href="listtoastr.html" rel="external">Remove Toastmaster</a></li> 
+        <li><a href="listspeechr.html" rel="external">Remove Speech Type</a></li>
+        </ul>
+    </div>
+  </div>
+        <main>
+        <form >
+            <div class="form-group">
+  <label for="speechType">Today's Report</label>
+               <input type="radio" name="tr">
+                </div> 
+            <br>
+            <br>
+            <div class="form-group">
+  <label for="speechType">CHOOSE BY DATE</label>
+                <input type="date" class="form-control" id="dch"/>
+                </div>
+            
+<button type="submit" size="small" class="btn btn-primary active" id="su" onclick="location.href='12report.html#page2'">SUBMIT</button>
+  
+   
+        </form>
+        </main>
+        </div>
+        <div data-role="page" id="page2">
+        
+        <header tabindex="0">REPORT</header>
+  <div id="nav-container">
+    <div class="button" tabindex="0">
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+    </div>
+    <div id="nav-content" tabindex="0">
+       <ul>
+        <li><a href="index.html" rel="external">Home Page</a></li>
+        <li><a href="3create_agenda.html" rel="external">Create Agenda</a></li>
+        <li><a href="modagenda.html" rel="external">View Agenda</a></li>
+        <li><a href="4timer.html" rel="external">Start Timer</a></li>
+       
+        <li><a href="12report.html" rel="external">Report</a></li>
+        <li><a href="9gen_info.html" rel="external">General Information</a></li>
+        <li><a href="listtoast.html" rel="external">Add Toastmaster</a></li>
+        <li><a href="listspeech.html" rel="external">Add Speech Type</a></li>  
+        <li><a href="listtoastr.html" rel="external">Remove Toastmaster</a></li> 
+        <li><a href="listspeechr.html" rel="external">Remove Speech Type</a></li>
+        </ul>
+    </div>
+  </div>
+        <main>
+      <br/>
+        <form>
+        <div class="a" id="con">
+            
+        </div>
+        
+            </form>
+            </main>
+        
+        
+        
+        </div>
+    </body>
+</html>
+   
+               
+               
+               
+               
+               
+               
